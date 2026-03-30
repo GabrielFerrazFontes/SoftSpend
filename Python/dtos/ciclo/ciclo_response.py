@@ -1,0 +1,14 @@
+from pydantic import BaseModel
+from typing import List
+from dtos import DiaResponse
+
+class CicloResponse(BaseModel):
+    id: int
+    valor_total: float
+    gasto_total: float
+    periodo: str
+    diaria: float
+    dias: List[DiaResponse]
+
+    class Config:
+        from_attributes = True

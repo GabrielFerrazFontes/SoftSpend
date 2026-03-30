@@ -1,26 +1,26 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-import schemas
+from dtos import CicloResponse, CicloRequest
 from services import ciclo_service
 
 router = APIRouter()
 
-@router.post("/ciclos", response_model=schemas.CicloResponse)
-def criar_ciclo(ciclo: schemas.CicloCreate, db: Session = Depends(get_db)):
+@router.post("/ciclos", response_model=CicloResponse)
+def criar_ciclo(ciclo: CicloRequest, db: Session = Depends(get_db)):
     return ciclo_service.criar_ciclo(db, ciclo)
 
 
-@router.get("/ciclos/{ciclo_id}", response_model=schemas.CicloResponse)
+@router.get("/ciclos/{ciclo_id}", response_model=CicloResponse)
 def get_ciclo(ciclo_id: int, db: Session = Depends(get_db)):
     return ciclo_service.get_ciclo(db, ciclo_id)
 
 
-@router.get("/usuario/ciclos/{user_id}", response_model=list[schemas.CicloResponse])
+@router.get("/usuario/ciclos/{user_id}", response_model=list[CicloResponse])
 def get_all_ciclos(user_id: int, db: Session = Depends(get_db)):
     return ciclo_service.get_all_ciclos(db, user_id)
 
 
-@router.post("/ciclos/lote", response_model=list[schemas.CicloResponse])
-def criar_varios(ciclos: list[schemas.CicloCreate], db: Session = Depends(get_db)):
+@router.post("/ciclos/lote", response_model=list[CicloResponse])
+def criar_varios(ciclos: list[CicloRequest], db: Session = Depends(get_db)):
     return ciclo_service.criar_varios(db, ciclos)
