@@ -8,6 +8,14 @@ xcuserdata/
 ## Obj-C/Swift specific
 *.hmap
 
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 ## App packaging
 *.ipa
 *.dSYM.zip
