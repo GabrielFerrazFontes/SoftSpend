@@ -100,9 +100,9 @@ final class CiclosListViewModel: ObservableObject {
     }
     
     private func updateCicloInfo() {
-        let available = actualCiclo.valor_total - actualCiclo.gasto_total
-        gastosInfo = GastosDia(valor: actualCiclo.gasto_total, titulo: "Gasto")
-        availableInfo = GastosDia(valor: available, titulo: "Disponivel")
+        let available = self.actualCiclo.valor_total - self.actualCiclo.gasto_total
+        self.gastosInfo = GastosDia(valor: actualCiclo.gasto_total, titulo: "Gasto")
+        self.availableInfo = GastosDia(valor: available, titulo: "Disponivel")
     }
     
     func createNewGasto( title: String, value: Decimal, dia: DiaSoftex) async throws {
@@ -111,7 +111,17 @@ final class CiclosListViewModel: ObservableObject {
         do {
             let gasto = GastosDia(valor: valueFloat, titulo: title)
             
-            try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: dia.backendId!)
+            let novoGasto = try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: dia.backendId!)
+            
+            await MainActor.run {
+                if let diaIndex = actualCiclo.dias.firstIndex(where: { $0.backendId == dia.backendId }) {
+                    
+                    self.actualCiclo.dias[diaIndex].gastos.append(novoGasto)
+                    self.actualCiclo.gasto_total += novoGasto.valor
+                    self.allCiclos[index] = self.actualCiclo
+                    self.updateCicloInfo()
+                }
+            }
             
             await fetchAllCiclos1()
                 

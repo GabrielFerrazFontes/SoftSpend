@@ -66,9 +66,9 @@ final class NetworkManager {
     }
     
     
-    func postGasto(newGasto: GastosDia, diaId: Int) async throws -> Void {
+    func postGasto(newGasto: GastosDia, diaId: Int) async throws -> GastosDia {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/dias/\(diaId)/gastos") else { return }
+        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/dias/\(diaId)/gastos") else { throw URLError(.badURL) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -96,6 +96,10 @@ final class NetworkManager {
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
+        
+        let gastoCriado = try decoder.decode(GastosDia.self, from: data)
+        
+        return gastoCriado
         
     }
     
