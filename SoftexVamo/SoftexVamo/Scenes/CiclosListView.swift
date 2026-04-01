@@ -32,8 +32,10 @@ struct CiclosListView: View {
                 .frame(width: 250, height: 250)
             CicloGastosView() {
                 addNewGastoSheet.toggle()
-            } deleteAction: { diaID, gastoID in
-                viewModel.deleteGasto(diaID: diaID, gastoID: gastoID)
+            } deleteAction: { diaId, gastoID in
+                Task{
+                    try await viewModel.deleteGasto(gastoID: gastoID)
+                }
             }
                 .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
         }
@@ -118,8 +120,12 @@ final class CiclosListViewModel: ObservableObject {
         }
     }
     
-    func deleteGasto(diaID: UUID, gastoID: UUID) {
-        // Network
+    func deleteGasto(gastoID: Int) async throws{
+        do{
+            try await NetworkManager.shared.deleteGasto(gastoId: gastoID)
+        }catch{
+            print("Erro ao deletar gasto", error)
+        }
     }
 }
 

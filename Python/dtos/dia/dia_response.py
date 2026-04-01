@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from typing import List
 from datetime import datetime, date, timezone
-from dtos import GastoResponse
+from dtos.gasto.gasto_response import GastoResponse
 
 class DiaResponse(BaseModel):
     id: int

@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
-import models, schemas
+import models
+from dtos.ciclo import CicloResponse, CicloRequest
 from repositories import ciclo_repository
 
 
-def montar_ciclo(ciclo: schemas.CicloCreate) -> models.Ciclo:
+def montar_ciclo(ciclo: CicloRequest) -> models.Ciclo:
     novo_ciclo = models.Ciclo(
         valor_total=ciclo.valor_total,
         periodo=ciclo.periodo,
@@ -34,12 +35,12 @@ def montar_ciclo(ciclo: schemas.CicloCreate) -> models.Ciclo:
     return novo_ciclo
 
 
-def criar_ciclo(db: Session, ciclo: schemas.CicloCreate):
+def criar_ciclo(db: Session, ciclo: CicloRequest):
     novo_ciclo = montar_ciclo(ciclo)
     return ciclo_repository.criar_ciclo(db, novo_ciclo)
 
 
-def criar_varios(db: Session, ciclos: list[schemas.CicloCreate]):
+def criar_varios(db: Session, ciclos: list[CicloRequest]):
     lista_ciclos = []
 
     for ciclo in ciclos:

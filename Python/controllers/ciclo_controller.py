@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from dtos import CicloResponse, CicloRequest
+from dtos.ciclo import CicloResponse, CicloRequest
 from services import ciclo_service
 
 router = APIRouter()

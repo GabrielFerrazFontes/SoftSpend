@@ -1,11 +1,12 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-import models, schemas
-from repositories import gasto_repository
+import models, dtos
+from dtos.gasto import GastoRequest
+from repositories import gasto_repository, dia_repository
 
-def criar_gasto(db: Session, dia_id: int, gasto: schemas.GastoCreate):
+def criar_gasto(db: Session, dia_id: int, gasto: GastoRequest):
     
-    dia = db.query(models.Dia).filter(models.Dia.id == dia_id).first()
+    dia = dia_repository.find_dia(db, dia_id)
 
     if not dia:
         raise HTTPException(status_code=404, detail="Dia não encontrado")
@@ -26,3 +27,27 @@ def criar_gasto(db: Session, dia_id: int, gasto: schemas.GastoCreate):
     db.refresh(novo_gasto)
 
     return novo_gasto
+
+def remover_gasto(db:Session, gasto_id: int):
+
+    gasto = gasto_repository.find_gasto(db, gasto_id)
+
+    if not gasto:
+        raise HTTPException(status_code=404, detail="Gasto não encontrado")
+    
+    dia = gasto.dia 
+    ciclo = dia.ciclo
+
+    dia.saldo += gasto.valor
+    ciclo.gasto_total -= gasto.valor
+
+    gasto_repository.remover_gasto(db, gasto)
+
+    db.commit()
+
+    return None
+
+
+
+
+    

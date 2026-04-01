@@ -12,7 +12,7 @@ struct CicloGastosView: View {
     @EnvironmentObject var viewModel: CicloGastosViewModel
     
     let action: () -> Void
-    let deleteAction: (UUID, UUID) -> Void
+    let deleteAction: (UUID, Int) -> Void
     
     var body: some View {
         VStack {
@@ -84,10 +84,10 @@ final class CicloGastosViewModel: ObservableObject {
         return dateFormatter.string(from: date)
     }
     
-    func deleteGasto(dia: inout DiaSoftex, offsets: IndexSet) -> UUID {
-        var gastoID = UUID()
+    func deleteGasto(dia: inout DiaSoftex, offsets: IndexSet) -> Int {
+        var gastoID : Int = 0
         for offset in offsets {
-            gastoID = dia.gastos.remove(at: offset).id
+            gastoID = dia.gastos.remove(at: offset).backendId!
         }
         return gastoID
     }

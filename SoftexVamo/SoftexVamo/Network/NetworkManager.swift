@@ -99,6 +99,23 @@ final class NetworkManager {
         
     }
     
+    func deleteGasto(gastoId: Int) async throws {
+        
+        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/gastos/\(gastoId)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
+        }
+        
+        print(String(data: data, encoding: .utf8) ?? "")
+    }
+    
     
     class InsecureSessionDelegate: NSObject, URLSessionDelegate {
         func urlSession(_ session: URLSession,

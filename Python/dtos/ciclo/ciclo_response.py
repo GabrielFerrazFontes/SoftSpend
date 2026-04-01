@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from dtos import DiaResponse
+from dtos.dia.dia_response import DiaResponse
 
 class CicloResponse(BaseModel):
     id: int
