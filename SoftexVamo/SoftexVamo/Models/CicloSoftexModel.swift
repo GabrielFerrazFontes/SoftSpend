@@ -14,6 +14,7 @@ struct CicloSoftex: Codable, Identifiable {
     var gasto_total: Float
     var periodo: String
     var diaria: Float
+    var titulo: String
     var dias: [DiaSoftex]
     var id_usuario: Int?
     
@@ -23,18 +24,19 @@ struct CicloSoftex: Codable, Identifiable {
             case gasto_total
             case periodo
             case diaria
+            case titulo
             case dias
             case id_usuario
         }
     
     static let examples = [
-        CicloSoftex(valor_total: 2145, gasto_total: 214, periodo: "10/03 - 17/03", diaria: 180, dias: DiaSoftex.examples),
-        CicloSoftex(valor_total: 2446, gasto_total: 214, periodo: "18/03 - 25/03", diaria: 167, dias: DiaSoftex.examples1),
-        CicloSoftex(valor_total: 2162, gasto_total: 214, periodo: "26/03 - 01/04", diaria: 172, dias: DiaSoftex.examples),
+        CicloSoftex(valor_total: 2145, gasto_total: 214, periodo: "10/03 - 17/03", diaria: 180, titulo: "Fortaleza", dias: DiaSoftex.examples),
+        CicloSoftex(valor_total: 2446, gasto_total: 214, periodo: "18/03 - 25/03", diaria: 167, titulo: "Cuiába", dias: DiaSoftex.examples1),
+        CicloSoftex(valor_total: 2162, gasto_total: 214, periodo: "26/03 - 01/04", diaria: 172, titulo: "Belém", dias: DiaSoftex.examples),
 
         ]
     
-    static let example = CicloSoftex(valor_total: 2145, gasto_total: 214, periodo: "10/03 - 17/03", diaria: 180, dias: DiaSoftex.examples)
+    static let example = CicloSoftex(valor_total: 2145, gasto_total: 214, periodo: "10/03 - 17/03", diaria: 180, titulo: "Fortaleza", dias: DiaSoftex.examples)
 }
     
 //

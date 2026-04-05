@@ -14,11 +14,13 @@ struct NewCicloView: View {
     @State var startDate: Date = Date()
     @State var endDate: Date = Date()
     @State var totalValue: Float = 2500
+    @State var titulo: String = ""
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
+                    TextField("Titulo", text: $titulo)
                     TextField("Valor do Gasto", value: $totalValue, format: .currency(code: "BRL"))
                         .keyboardType(.decimalPad)
                     DatePicker("Dia de Inicio", selection: $startDate, displayedComponents: .date)
@@ -40,7 +42,7 @@ struct NewCicloView: View {
             .toolbar {
                 Button("", systemImage: "checkmark.circle") {
                     Task{
-                        await viewModel.createNewCiclo(startDate: startDate, endDate: endDate, totalValue: totalValue)
+                        await viewModel.createNewCiclo(startDate: startDate, endDate: endDate, totalValue: totalValue, titulo: titulo)
                     }
                 }
             }
@@ -56,13 +58,13 @@ struct NewCicloView: View {
 final class NewCicloViewModel: ObservableObject {
     @Published var textResult = ""
     
-    func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float) async {
+    func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float, titulo: String) async {
         let dayCount = Calendar.current.datesBetween(startDate, and: endDate)
         let saldo = totalValue / Float(dayCount)
         var days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
         let periodo = createPeriodoString(from: startDate, to: endDate)
         
-        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, dias: days, id_usuario: 1)
+        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: 1)
  
         await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
     }

@@ -7,6 +7,7 @@ from repositories import ciclo_repository
 def montar_ciclo(ciclo: CicloRequest) -> models.Ciclo:
     novo_ciclo = models.Ciclo(
         valor_total=ciclo.valor_total,
+        titulo=ciclo.titulo,
         periodo=ciclo.periodo,
         diaria=ciclo.diaria,
         id_usuario=ciclo.id_usuario

@@ -6,5 +6,6 @@ class CicloRequest(BaseModel):
     valor_total: float
     periodo: str
     diaria: float
+    titulo: str
     id_usuario: int
     dias: List[DiaRequest]

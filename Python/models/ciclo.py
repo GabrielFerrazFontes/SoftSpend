@@ -9,7 +9,8 @@ class Ciclo(Base):
 
     valor_total = Column(Float)
     gasto_total = Column(Float)
-    periodo = Column(String)
+    titulo = Column(String(100))
+    periodo = Column(String(100))
     diaria = Column(Float)
 
     id_usuario = Column(Integer, ForeignKey("users.id"))

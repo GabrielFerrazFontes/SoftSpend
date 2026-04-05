@@ -21,7 +21,7 @@ struct CiclosListView: View {
                 }
                 .padding(.leading)
                 Spacer()
-                Text(viewModel.actualCiclo.periodo)
+                Text(viewModel.actualCiclo.titulo)
                 Spacer()
                 Button("", systemImage: "arrow.right") {
                     viewModel.nextCiclo()
@@ -74,6 +74,10 @@ final class CiclosListViewModel: ObservableObject {
        
         do {
             let ciclos = try await NetworkManager.shared.fetchAllCiclos()
+            
+            if ciclos.isEmpty {
+                return
+            }
 
             self.allCiclos = ciclos
             self.actualCiclo = ciclos.last!
