@@ -24,9 +24,8 @@ struct CustomTabBarView: View {
                         CiclosListView()
                             .environmentObject(viewModel)
                 } else {
-                    Text("Tela de Histórico")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.white)
+                    HistoricoView()
+                        .environmentObject(viewModel)
                 }
             }
             

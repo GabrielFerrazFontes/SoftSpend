@@ -8,11 +8,43 @@
 import SwiftUI
 
 struct HistoricoView: View {
+    
+    @EnvironmentObject var viewModel: CiclosListViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack{
+            ScrollView{
+                VStack(alignment: .leading){
+                    Text("Histórico")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.horizontal)
+                    Text("Todos os seu ciclos registrados")
+                        .foregroundStyle(Color.black.opacity(0.45))
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    ForEach(viewModel.allCiclos){ ciclo in
+                        CardCiclosView(ciclo: ciclo)
+                            .environmentObject(viewModel)
+                    }
+                    
+                }
+
+            }
+//
+        }
+        .padding(.top, 20)
+        .onAppear(){
+            Task{
+                await viewModel.fetchAllCiclos1()
+            }
+            
+        }
+        
     }
 }
 
 #Preview {
     HistoricoView()
+        .environmentObject(CiclosListViewModel())
 }

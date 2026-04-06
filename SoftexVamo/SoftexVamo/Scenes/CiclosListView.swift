@@ -41,7 +41,10 @@ struct CiclosListView: View {
         }
         .onAppear {
             Task{
-                await viewModel.fetchAllCiclos1()
+                if(viewModel.actualCiclo.id == CicloSoftex.example.id){
+                    await viewModel.fetchAllCiclos1()
+                }
+                
             }
         }
         .sheet(isPresented: $addNewGastoSheet) {
@@ -59,6 +62,7 @@ struct CiclosListView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -66,23 +70,27 @@ final class CiclosListViewModel: ObservableObject {
     @Published var actualCiclo: CicloSoftex = CicloSoftex.example
     @Published var gastosInfo: GastosDia = GastosDia.example
     @Published var availableInfo: GastosDia = GastosDia.example
+    private var hasLoadedOnce = false
     var allCiclos: [CicloSoftex] = []
     var index: Int = 0
     
     @MainActor
     func fetchAllCiclos1() async {
+        
+        if hasLoadedOnce { return }
        
         do {
-            let ciclos = try await NetworkManager.shared.fetchAllCiclos()
-            
-            if ciclos.isEmpty {
-                return
-            }
+//            var ciclos = try await NetworkManager.shared.fetchAllCiclos()
+//            
+//            if ciclos.isEmpty {
+//                ciclos = CicloSoftex.examples
+//            }
 
-            self.allCiclos = ciclos
-            self.actualCiclo = ciclos.last!
-            self.index = ciclos.count - 1
+            self.allCiclos = CicloSoftex.examples
+            self.actualCiclo = self.allCiclos[self.index]
+            self.index = CicloSoftex.examples.count - 1
             self.updateCicloInfo()
+            self.hasLoadedOnce = true
 
         } catch {
             print("Erro ao buscar ciclos:", error)

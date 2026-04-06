@@ -8,11 +8,111 @@
 import SwiftUI
 
 struct CardCiclosView: View {
+    
+    @EnvironmentObject var viewModel: CiclosListViewModel
+    
+    @State var ciclo : CicloSoftex = CicloSoftex(valor_total: 5000, gasto_total: 1000, periodo: "04 abr - 10 jun", diaria: 200, titulo: "Fortaleza", dias: [DiaSoftex(gastos: [], data: Date.now, saldo: 300)])
+    @State var presentCiclo = false
+    
+    let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
+    let corFundoTela = LinearGradient(
+        colors: [Color("roxoInicial"),
+                 Color("roxoFinal")],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    
+    var progresso: CGFloat {
+        // Evita divisão por zero e garante que não passe de 100%
+        let percent = ciclo.valor_total > 0 ? ciclo.gasto_total / ciclo.valor_total : 0
+        return CGFloat(min(max(percent, 0), 1))
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack{
+            ZStack{
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(viewModel.actualCiclo.id == ciclo.id ?
+                          AnyShapeStyle(corFundoTela) :
+                            AnyShapeStyle(Color.white))
+                    .frame(maxWidth: .infinity, maxHeight: 180)
+                    .shadow(radius: 10)
+                
+                VStack{
+                    HStack{
+                        ZStack {
+                            Image(systemName: "mappin.and.ellipse")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? .white : Color("roxoInicial"))
+                        }
+                        .frame(width: 60, height: 60)
+                        .background(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.15) : Color.purple.opacity(0.15))
+                        .cornerRadius(18)
+                        .padding(.trailing, 10)
+                        VStack(alignment: .leading){
+                            Text(ciclo.titulo)
+                                .font(.system(size: 28, weight: .bold))
+                            Text(ciclo.periodo)
+                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                    }
+                    
+                    HStack{
+                        Text("Total Gasto")
+                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                            .font(.system(size: 18, weight: .bold))
+                        Spacer()
+                        Text("R$ " + String(ciclo.gasto_total))
+                            .font(.system(size: 24, weight: .bold))
+                    }
+                    .padding(.top, 10)
+                    
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.white.opacity(0.2))
+                                .frame(height: 10)
+                            
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(viewModel.actualCiclo.id == ciclo.id ?
+                                      AnyShapeStyle(Color(red: 0.4, green: 0.9, blue: 0.5)) : AnyShapeStyle(Color("roxoInicial")))
+                                .frame(width: geometry.size.width * progresso, height: 10)
+                                .animation(.spring(), value: ciclo.gasto_total)
+                        }
+                    }
+                    .frame(height: 10)
+                    
+                    
+                    
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: 180)
+                
+            }
+            .padding(.horizontal)
+            .onTapGesture {
+                viewModel.actualCiclo = ciclo
+                presentCiclo = true
+            }
+            .navigationDestination(isPresented: $presentCiclo) {
+                CiclosListView()
+                    .environmentObject(viewModel)
+            }
+        }
+//
+        .foregroundColor(viewModel.actualCiclo.id == ciclo.id ? .white : .black)
+        .padding(.bottom, 10)
+//        .ignoresSafeArea()
+        
     }
 }
 
 #Preview {
     CardCiclosView()
+        .environmentObject(CiclosListViewModel())
 }
