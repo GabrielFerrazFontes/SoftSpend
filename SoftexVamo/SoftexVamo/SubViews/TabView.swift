@@ -7,11 +7,9 @@
 
 import SwiftUI
 
-struct CustomTabBarView: View {
-
-    @State private var selectedTab = 0
+struct MainView: View {
     
-    let viewModel = CiclosListViewModel()
+    @StateObject var viewModel = CiclosListViewModel()
     let newCicloViewModel = NewCicloViewModel()
     @State var sheetview = false
 
@@ -20,26 +18,25 @@ struct CustomTabBarView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                if selectedTab == 0 {
-                        CiclosListView()
-                            .environmentObject(viewModel)
+                if viewModel.selectedTab == 0 {
+                    CiclosListView()
                 } else {
                     HistoricoView()
-                        .environmentObject(viewModel)
                 }
             }
+            .environmentObject(viewModel)
             
             HStack {
                 Button(action: {
-                    selectedTab = 0
+                    viewModel.selectedTab = 0
                 }) {
                     VStack(spacing: 4) {
-                        Image(systemName: selectedTab == 0 ? "house.fill" : "house")
+                        Image(systemName: viewModel.selectedTab == 0 ? "house.fill" : "house")
                             .font(.system(size: 22))
                         Text("Início")
                             .font(.system(size: 12, weight: .semibold))
                     }
-                    .foregroundColor(selectedTab == 0 ? primaryPurple : .gray)
+                    .foregroundColor(viewModel.selectedTab == 0 ? primaryPurple : .gray)
                 }
                 .frame(maxWidth: .infinity)
                 
@@ -64,7 +61,7 @@ struct CustomTabBarView: View {
                 
                 
                 Button(action: {
-                    selectedTab = 1
+                    viewModel.selectedTab = 1
                 }) {
                     VStack(spacing: 4) {
                         Image(systemName: "clock")
@@ -72,7 +69,7 @@ struct CustomTabBarView: View {
                         Text("Histórico")
                             .font(.system(size: 12, weight: .semibold))
                     }
-                    .foregroundColor(selectedTab == 1 ? primaryPurple : .gray)
+                    .foregroundColor(viewModel.selectedTab == 1 ? primaryPurple : .gray)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -87,6 +84,6 @@ struct CustomTabBarView: View {
 
 struct CustomTabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        CustomTabBarView()
+        MainView()
     }
 }

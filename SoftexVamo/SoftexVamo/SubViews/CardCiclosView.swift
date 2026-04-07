@@ -11,7 +11,7 @@ struct CardCiclosView: View {
     
     @EnvironmentObject var viewModel: CiclosListViewModel
     
-    @State var ciclo : CicloSoftex = CicloSoftex(valor_total: 5000, gasto_total: 1000, periodo: "04 abr - 10 jun", diaria: 200, titulo: "Fortaleza", dias: [DiaSoftex(gastos: [], data: Date.now, saldo: 300)])
+    @State var ciclo : CicloSoftex = CicloSoftex.example
     @State var presentCiclo = false
     
     let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
@@ -29,7 +29,6 @@ struct CardCiclosView: View {
     }
     
     var body: some View {
-        NavigationStack{
             ZStack{
                 RoundedRectangle(cornerRadius: 24)
                     .fill(viewModel.actualCiclo.id == ciclo.id ?
@@ -98,16 +97,12 @@ struct CardCiclosView: View {
             .onTapGesture {
                 viewModel.actualCiclo = ciclo
                 presentCiclo = true
+                viewModel.selectedTab = 0
             }
-            .navigationDestination(isPresented: $presentCiclo) {
-                CiclosListView()
-                    .environmentObject(viewModel)
-            }
-        }
-//
+        //
         .foregroundColor(viewModel.actualCiclo.id == ciclo.id ? .white : .black)
         .padding(.bottom, 10)
-//        .ignoresSafeArea()
+        //        .ignoresSafeArea()
         
     }
 }

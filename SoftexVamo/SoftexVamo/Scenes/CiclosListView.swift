@@ -14,7 +14,7 @@ struct CiclosListView: View {
     @State var addNewGastoSheet: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Button("", systemImage: "arrow.left") {
                     viewModel.previousCiclo()
@@ -28,8 +28,9 @@ struct CiclosListView: View {
                 }
                 .padding(.trailing)
             }
-            CicloInfoView(gastos: $viewModel.gastosInfo, available: $viewModel.availableInfo)
-                .frame(width: 250, height: 250)
+            CardMainView(ciclo: viewModel.actualCiclo)
+            
+            
             CicloGastosView() {
                 addNewGastoSheet.toggle()
             } deleteAction: { diaId, gastoID in
@@ -70,6 +71,8 @@ final class CiclosListViewModel: ObservableObject {
     @Published var actualCiclo: CicloSoftex = CicloSoftex.example
     @Published var gastosInfo: GastosDia = GastosDia.example
     @Published var availableInfo: GastosDia = GastosDia.example
+    @Published var selectedTab: Int = 0
+    
     private var hasLoadedOnce = false
     var allCiclos: [CicloSoftex] = []
     var index: Int = 0

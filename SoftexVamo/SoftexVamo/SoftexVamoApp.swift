@@ -12,18 +12,7 @@ import SwiftData
 struct SoftexVamoApp: App {
     var body: some Scene {
         WindowGroup {
-            TabView {
-                CiclosListView()
-                    .environmentObject(CiclosListViewModel())
-                    .tabItem {
-                        Label("Ciclos", systemImage: "airplane.up.right")
-                    }
-                NewCicloView()
-                    .environmentObject(NewCicloViewModel())
-                    .tabItem {
-                        Label("Novo Ciclo", systemImage: "plus")
-                    }
-            }
+            MainView()
         }
     }
 }
