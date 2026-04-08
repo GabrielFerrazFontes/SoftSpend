@@ -26,6 +26,7 @@ struct HistoricoView: View {
                     ForEach(viewModel.allCiclos){ ciclo in
                         CardCiclosView(ciclo: ciclo)
                             .environmentObject(viewModel)
+                            .id("\(ciclo.id)-\(viewModel.actualCiclo.id)")
                     }
                     
                 }
@@ -34,12 +35,12 @@ struct HistoricoView: View {
 //
         }
         .padding(.top, 20)
-        .onAppear(){
-            Task{
-                await viewModel.fetchAllCiclos1()
-            }
-            
-        }
+//        .onAppear(){
+//            Task{
+//                await viewModel.fetchAllCiclos1()
+//            }
+//            
+//        }
         
     }
 }

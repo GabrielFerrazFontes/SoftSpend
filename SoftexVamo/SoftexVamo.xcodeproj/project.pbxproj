@@ -6,22 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		2834257C2F857EFC00710FB7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2834257B2F857EFB00710FB7 /* WidgetKit.framework */; };
-		2834257E2F857EFC00710FB7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2834257D2F857EFC00710FB7 /* SwiftUI.framework */; };
-		283425892F857EFF00710FB7 /* SoftexWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 283425792F857EFB00710FB7 /* SoftexWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		283425872F857EFF00710FB7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2810857E2F74615600C131AB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 283425782F857EFB00710FB7;
-			remoteInfo = SoftexWidgetExtension;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		2834258A2F857EFF00710FB7 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -29,7 +13,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				283425892F857EFF00710FB7 /* SoftexWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,19 +21,11 @@
 
 /* Begin PBXFileReference section */
 		281085862F74615600C131AB /* SoftexVamo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoftexVamo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		283425792F857EFB00710FB7 /* SoftexWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SoftexWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2834257B2F857EFB00710FB7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2834257D2F857EFC00710FB7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2834258E2F857EFF00710FB7 /* Exceptions for "SoftexWidget" folder in "SoftexWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 283425782F857EFB00710FB7 /* SoftexWidgetExtension */;
-		};
 		F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftexVamo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -71,9 +46,6 @@
 		};
 		2834257F2F857EFC00710FB7 /* SoftexWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				2834258E2F857EFF00710FB7 /* Exceptions for "SoftexWidget" folder in "SoftexWidgetExtension" target */,
-			);
 			path = SoftexWidget;
 			sourceTree = "<group>";
 		};
@@ -84,15 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		283425762F857EFB00710FB7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2834257E2F857EFC00710FB7 /* SwiftUI.framework in Frameworks */,
-				2834257C2F857EFC00710FB7 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +76,6 @@
 			isa = PBXGroup;
 			children = (
 				281085862F74615600C131AB /* SoftexVamo.app */,
-				283425792F857EFB00710FB7 /* SoftexWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -142,7 +104,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				283425882F857EFF00710FB7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				281085882F74615600C131AB /* SoftexVamo */,
@@ -153,28 +114,6 @@
 			productName = SoftexVamo;
 			productReference = 281085862F74615600C131AB /* SoftexVamo.app */;
 			productType = "com.apple.product-type.application";
-		};
-		283425782F857EFB00710FB7 /* SoftexWidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2834258D2F857EFF00710FB7 /* Build configuration list for PBXNativeTarget "SoftexWidgetExtension" */;
-			buildPhases = (
-				283425752F857EFB00710FB7 /* Sources */,
-				283425762F857EFB00710FB7 /* Frameworks */,
-				283425772F857EFB00710FB7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				2834257F2F857EFC00710FB7 /* SoftexWidget */,
-			);
-			name = SoftexWidgetExtension;
-			packageProductDependencies = (
-			);
-			productName = SoftexWidgetExtension;
-			productReference = 283425792F857EFB00710FB7 /* SoftexWidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -188,9 +127,6 @@
 				TargetAttributes = {
 					281085852F74615600C131AB = {
 						CreatedOnToolsVersion = 26.0.1;
-					};
-					283425782F857EFB00710FB7 = {
-						CreatedOnToolsVersion = 26.4;
 					};
 				};
 			};
@@ -209,20 +145,12 @@
 			projectRoot = "";
 			targets = (
 				281085852F74615600C131AB /* SoftexVamo */,
-				283425782F857EFB00710FB7 /* SoftexWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		281085842F74615600C131AB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		283425772F857EFB00710FB7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,22 +167,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		283425752F857EFB00710FB7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		283425882F857EFF00710FB7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 283425782F857EFB00710FB7 /* SoftexWidgetExtension */;
-			targetProxy = 283425872F857EFF00710FB7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		281085912F74615900C131AB /* Debug */ = {
@@ -444,68 +357,6 @@
 			};
 			name = Release;
 		};
-		2834258B2F857EFF00710FB7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DHFGW8SG9X;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SoftexWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SoftexWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gabriel.fontes.SoftexVamo.SoftexWidget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		2834258C2F857EFF00710FB7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DHFGW8SG9X;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SoftexWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SoftexWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gabriel.fontes.SoftexVamo.SoftexWidget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -523,15 +374,6 @@
 			buildConfigurations = (
 				281085942F74615900C131AB /* Debug */,
 				281085952F74615900C131AB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2834258D2F857EFF00710FB7 /* Build configuration list for PBXNativeTarget "SoftexWidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2834258B2F857EFF00710FB7 /* Debug */,
-				2834258C2F857EFF00710FB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

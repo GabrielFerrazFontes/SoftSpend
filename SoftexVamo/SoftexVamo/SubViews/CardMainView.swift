@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CardMainView: View {
-    @State var ciclo : CicloSoftex = CicloSoftex.example
     @EnvironmentObject var viewModel: CiclosListViewModel
     
     @State var presentCiclo = false
@@ -23,7 +22,7 @@ struct CardMainView: View {
     
     var progresso: CGFloat {
         // Evita divisão por zero e garante que não passe de 100%
-        let percent = ciclo.valor_total > 0 ? ciclo.gasto_total / ciclo.valor_total : 0
+        let percent = viewModel.actualCiclo.valor_total > 0 ? viewModel.actualCiclo.gasto_total / viewModel.actualCiclo.valor_total : 0
         return CGFloat(min(max(percent, 0), 1))
     }
     
@@ -37,14 +36,16 @@ struct CardMainView: View {
             VStack(alignment: .leading){
                 HStack{
                     Text("CICLO ATUAL")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 14, weight: .bold))
                         .padding(.horizontal, 15)
                         .padding(.vertical, 5)
                         .background(Color.white.opacity(0.25))
                         .cornerRadius(12)
                     Spacer()
-                    Text(ciclo.titulo)
+                    Text(viewModel.actualCiclo.titulo)
                         .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(Color.white.opacity(0.75))
+
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(Color.white.opacity(0.75))
@@ -53,17 +54,18 @@ struct CardMainView: View {
                 Spacer()
                 Text("Total Gasto")
                     .foregroundStyle(Color.white.opacity(0.75))
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                 
-                Text(ciclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))
-                    .font(.system(size: 40, weight: .heavy))
+                Text(viewModel.actualCiclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))
+                    .font(.system(size: 36, weight: .heavy))
+
                 Spacer()
                 HStack{
-                    Text("Limite: \(ciclo.valor_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
+                    Text("Limite: \(viewModel.actualCiclo.valor_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
                         .foregroundStyle(Color.white.opacity(0.75))
                         .font(.system(size: 13, weight: .bold))
                     Spacer()
-                    Text("Dísponivel: \(ciclo.valor_total - ciclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
+                    Text("Dísponivel: \(viewModel.actualCiclo.valor_total - viewModel.actualCiclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
                         .foregroundStyle(Color.white.opacity(0.75))
                         .font(.system(size: 13, weight: .bold))
                 }
@@ -77,7 +79,7 @@ struct CardMainView: View {
                             .fill(
                                 AnyShapeStyle(Color(red: 0.4, green: 0.9, blue: 0.5)))
                             .frame(width: geometry.size.width * progresso, height: 10)
-                            .animation(.spring(), value: ciclo.gasto_total)
+                            .animation(.spring(), value: viewModel.actualCiclo.gasto_total)
                     }
                 }
                 .frame(height: 10)
@@ -89,10 +91,10 @@ struct CardMainView: View {
             .frame(maxWidth: .infinity, maxHeight: 250)
             
         }
+        .skeleton(RoundedRectangle(cornerRadius: 24), isLoading: viewModel.isLoading)
         .foregroundStyle(.white)
         .padding(.horizontal)
         .onTapGesture {
-            viewModel.actualCiclo = ciclo
             presentCiclo = true
             viewModel.selectedTab = 1
         }

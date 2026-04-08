@@ -15,38 +15,19 @@ struct CiclosListView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Button("", systemImage: "arrow.left") {
-                    viewModel.previousCiclo()
-                }
-                .padding(.leading)
-                Spacer()
-                Text(viewModel.actualCiclo.titulo)
-                Spacer()
-                Button("", systemImage: "arrow.right") {
-                    viewModel.nextCiclo()
-                }
-                .padding(.trailing)
-            }
-            CardMainView(ciclo: viewModel.actualCiclo)
-            
+
+            CardMainView()
             
             CicloGastosView() {
                 addNewGastoSheet.toggle()
             } deleteAction: { diaId, gastoID in
-                Task{
-                    try await viewModel.deleteGasto(gastoID: gastoID)
-                }
+                Task { try await viewModel.deleteGasto(gastoID: gastoID) }
             }
-                .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
+            .id(viewModel.actualCiclo.id)
+            .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
         }
-        .onAppear {
-            Task{
-                if(viewModel.actualCiclo.id == CicloSoftex.example.id){
-                    await viewModel.fetchAllCiclos1()
-                }
-                
-            }
+        .task {
+                await viewModel.fetchAllCiclos1()
         }
         .sheet(isPresented: $addNewGastoSheet) {
             AddNewGastoSheetView(
@@ -68,35 +49,67 @@ struct CiclosListView: View {
 }
 
 final class CiclosListViewModel: ObservableObject {
-    @Published var actualCiclo: CicloSoftex = CicloSoftex.example
+    @Published var allCiclos: [CicloSoftex] = []
+    @Published var actualCiclo: CicloSoftex
     @Published var gastosInfo: GastosDia = GastosDia.example
     @Published var availableInfo: GastosDia = GastosDia.example
+    @Published var isLoading: Bool = true
     @Published var selectedTab: Int = 0
     
     private var hasLoadedOnce = false
-    var allCiclos: [CicloSoftex] = []
     var index: Int = 0
+    
+    init() {
+        self.actualCiclo = CicloSoftex.example
+    }
     
     @MainActor
     func fetchAllCiclos1() async {
         
         if hasLoadedOnce { return }
-       
+        
+        let cacheData = UserDefaults.standard.data(forKey: "ultimo_ciclo_cache")
+            
+            if let data = cacheData {
+                if let cache = try? await Task.detached(priority: .userInitiated, operation: {
+                    try JSONDecoder().decode(CicloSoftex.self, from: data)
+                }).value {
+                    self.actualCiclo = cache
+                    print("Cache carregado em background")
+                }
+            }
+        
         do {
-//            var ciclos = try await NetworkManager.shared.fetchAllCiclos()
-//            
-//            if ciclos.isEmpty {
-//                ciclos = CicloSoftex.examples
-//            }
-
-            self.allCiclos = CicloSoftex.examples
-            self.actualCiclo = self.allCiclos[self.index]
-            self.index = CicloSoftex.examples.count - 1
-            self.updateCicloInfo()
+            let ciclos = try await NetworkManager.shared.fetchAllCiclos()
+            
+            if ciclos.isEmpty {
+                self.allCiclos = CicloSoftex.examples
+            } else {
+                self.allCiclos = ciclos
+            }
+            
+            let cicloFinal = ciclos[self.index]
+            
+            self.index = self.allCiclos.count - 1
+            
+            if self.index >= 0 {
+                self.actualCiclo = self.allCiclos[self.index]
+            }
+            
+            self.salvarNoCache(ciclo: cicloFinal)
+            
+            if self.actualCiclo.backendId != nil {
+                self.isLoading = false
+            }
+            
             self.hasLoadedOnce = true
-
+            
         } catch {
             print("Erro ao buscar ciclos:", error)
+            
+            self.allCiclos = CicloSoftex.examples
+            self.actualCiclo = self.allCiclos[0]
+            self.hasLoadedOnce = true
         }
     }
     
@@ -104,21 +117,27 @@ final class CiclosListViewModel: ObservableObject {
         guard index <= allCiclos.count - 2 else { return }
         index += 1
         actualCiclo = allCiclos[index]
-        updateCicloInfo()
     }
     
     func previousCiclo() {
         guard index > 0 else { return }
         index -= 1
         actualCiclo = allCiclos[index]
-        updateCicloInfo()
     }
     
-    private func updateCicloInfo() {
-        let available = self.actualCiclo.valor_total - self.actualCiclo.gasto_total
-        self.gastosInfo = GastosDia(valor: actualCiclo.gasto_total, titulo: "Gasto")
-        self.availableInfo = GastosDia(valor: available, titulo: "Disponivel")
+    private func salvarNoCache(ciclo: CicloSoftex) {
+        if ciclo.backendId != nil {
+            if let encoded = try? JSONEncoder().encode(ciclo) {
+                UserDefaults.standard.set(encoded, forKey: "ultimo_ciclo_cache")
+            }
+        }
     }
+    
+//    private func updateCicloInfo() {
+//        let available = self.actualCiclo.valor_total - self.actualCiclo.gasto_total
+//        self.gastosInfo = GastosDia(valor: actualCiclo.gasto_total, titulo: "Gasto")
+//        self.availableInfo = GastosDia(valor: available, titulo: "Disponivel")
+//    }
     
     func createNewGasto( title: String, value: Decimal, dia: DiaSoftex) async throws {
         let valueFloat = Float(value.description) ?? 0.0
@@ -134,12 +153,11 @@ final class CiclosListViewModel: ObservableObject {
                     self.actualCiclo.dias[diaIndex].gastos.append(novoGasto)
                     self.actualCiclo.gasto_total += novoGasto.valor
                     self.allCiclos[index] = self.actualCiclo
-                    self.updateCicloInfo()
                 }
             }
             
             await fetchAllCiclos1()
-                
+            
         } catch {
             print("Erro ao criar gasto:", error)
         }

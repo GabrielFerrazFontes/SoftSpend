@@ -61,25 +61,37 @@ struct CicloGastosView: View {
                         }
                 }
                 ForEach(viewModel.secoesExibidas) { dia in
-                    Section(header: createSectionHeader(dia: dia)) {
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .shadow(radius: 2)
-                            VStack{
-                                ForEach(Array(dia.gastos.enumerated()), id: \.element.id) { index, gasto in
-                                    createGastoCell(gasto: gasto) {
-                                        removerGastoEspecifico(dia: dia, index: index)
+                    if(dia.gastos.count != 0){
+                        Section(header: createSectionHeader(dia: dia)) {
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.white)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .shadow(radius: 2)
+                                VStack{
+                                    ForEach(Array(dia.gastos.enumerated()), id: \.element.id) { index, gasto in
+                                        createGastoCell(gasto: gasto) {
+                                            removerGastoEspecifico(dia: dia, index: index)
+                                        }
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 8)
+                                        
+                                        if index < dia.gastos.count - 1 {
+                                            Divider()
+                                                .background(Color.gray.opacity(0.2))
+                                                .padding(.horizontal, -10)
+                                        }
                                     }
+                                    .onDelete { indexSet in
+                                        let gastoID = viewModel.deleteGasto(dia: dia, offsets: indexSet)
+                                        deleteAction(dia.id, gastoID)
+                                    }
+                                    
                                 }
-                                .onDelete { indexSet in
-                                    let gastoID = viewModel.deleteGasto(dia: dia, offsets: indexSet)
-                                    deleteAction(dia.id, gastoID)
-                                }
-                                
+                                .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+
+                                //                            .padding()
                             }
-                            .padding()
                         }
                     }
                 }
@@ -93,16 +105,25 @@ struct CicloGastosView: View {
         HStack {
             if Calendar.current.isDateInToday(dia.data) {
                 Text("HOJE")
+                    .frame(width: 90)
+                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+                    
                 
             } else if Calendar.current.isDateInYesterday(dia.data) {
                 Text("ONTEM")
+                    .frame(width: 90)
+                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
                 
             } else {
                 Text(viewModel.dateToString(date: dia.data))
+                    .frame(width: 90)
+                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
             }
             
             Spacer()
         }
+        
+        .padding(.top)
         .font(.system(size: 16, weight: .medium))
         .foregroundStyle(Color.black.opacity(0.55))
         
@@ -138,12 +159,21 @@ struct CicloGastosView: View {
                     onDelete()
                 } label: {
                     Image(systemName: "trash")
+                        .font(.system(size: 10, weight: .light))
+                    
+                        .frame(width: 20, height: 20)
+                        .padding(2)
+                        .background(Color.red.opacity(0.05))
+                        .cornerRadius(10)
                         .foregroundStyle(.red)
                 }
                 .buttonStyle(.plain)
             }
         }
+        
         .frame(maxWidth: .infinity, maxHeight: 70)
+        
+        
     }
 }
 
@@ -158,16 +188,14 @@ struct CicloGastosView: View {
 
 final class CicloGastosViewModel: ObservableObject {
     
-    @Published var ciclo: CicloSoftex = CicloSoftex.example
+    @Published var ciclo: CicloSoftex
     @Published var searchGastoText: String = ""
     
     let cicloViewModel: CiclosListViewModel = CiclosListViewModel()
     
     init(ciclo: CicloSoftex) {
-        self.ciclo = cicloViewModel.actualCiclo
+        self.ciclo = ciclo
     }
-    
-    
     
     func dateToString(date: Date) -> String {
         let dateFormatter = DateFormatter()
