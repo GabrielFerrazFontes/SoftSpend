@@ -9,42 +9,152 @@ import SwiftUI
 import Combine
 
 struct NewCicloView: View {
-    @EnvironmentObject var viewModel: NewCicloViewModel
     
-    @State var startDate: Date = Date()
-    @State var endDate: Date = Date()
-    @State var totalValue: Float = 2500
-    @State var titulo: String = ""
+    private enum Field: Int, CaseIterable {
+            case nomeCiclo, orcamento
+        }
+    
+    @Environment(\.dismiss) var dismiss
+    
+    @EnvironmentObject var novoCicloViewModel: NewCicloViewModel
+    
+    @State private var nomeCiclo: String = ""
+    @State private var orcamentoString: String = ""
+    @State private var orcamento: Float = 0.0
+    @State private var dataInicio = Date()
+    @State private var dataFim = Date().addingTimeInterval(86400 * 7)
+    
+    @FocusState private var focusedField: Field?
     
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    TextField("Titulo", text: $titulo)
-                    TextField("Valor do Gasto", value: $totalValue, format: .currency(code: "BRL"))
-                        .keyboardType(.decimalPad)
-                    DatePicker("Dia de Inicio", selection: $startDate, displayedComponents: .date)
-                    DatePicker("Dia de Inicio", selection: $endDate, displayedComponents: .date)
+        VStack(alignment: .leading, spacing: 20) {
+            Button(action: { dismiss() }) {
+                HStack {
+                    Image(systemName: "chevron.left")
+                    Text("Voltar")
                 }
-                if !viewModel.textResult.isEmpty {
-                    Section {
-                        HStack {
-                            Spacer()
-                            Text(viewModel.textResult)
-                                .multilineTextAlignment(.center)
-                            Spacer()
-                        }
+                .foregroundColor(.purple)
+                .font(.system(size: 18, weight: .medium))
+            }
+            .padding(.top, 10)
+            
+            Text("Novo Ciclo")
+                .font(.system(size: 34, weight: .bold))
+                .padding(.bottom, 10)
+            
+            VStack(spacing: 25) {
+                InputField(title: "Nome do Ciclo", icon: "mappin.and.ellipse") {
+                    TextField("Ex: São Paulo, SP", text: $nomeCiclo)
+                        .font(.system(size: 18, weight: .medium))
+                        .focused($focusedField, equals: .nomeCiclo)
+                }
+                
+                Divider()
+                
+                InputField(title: "Orçamento Total", icon: "briefcase") {
+                    HStack {
+                        Text("R$")
+                            .foregroundStyle(Color(.secondaryLabel).opacity(0.65))
+                            .font(.system(size: 18, weight: .medium))
+                        TextField("0,00", text: $orcamentoString)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: orcamentoString) { oldValue, newValue in
+                                orcamento = novoCicloViewModel.verificarNumeros(orcamento: newValue)
+                            }
+                            .font(.system(size: 18, weight: .heavy))
+                            .focused($focusedField, equals: .orcamento)
                     }
+                }
+                
+                Divider()
+                
+                VStack(spacing: 20) {
+                    DatePickerField(title: "Data de Início", date: $dataInicio)
+                    DatePickerField(title: "Data de Fim", date: $dataFim)
                 }
             }
-            .navigationTitle("Criar Novo Ciclo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                Button("", systemImage: "checkmark.circle") {
-                    Task{
-                        await viewModel.createNewCiclo(startDate: startDate, endDate: endDate, totalValue: totalValue, titulo: titulo)
-                    }
+            .padding(25)
+            .background(Color.white)
+            .cornerRadius(30)
+            .shadow(color: .black.opacity(0.05), radius: 15, x: 0, y: 10)
+            
+            Spacer()
+            
+            Button(action: {
+                Task{
+                   await novoCicloViewModel.createNewCiclo(startDate: dataInicio, endDate: dataFim, totalValue: Float(orcamento), titulo: nomeCiclo)
                 }
+            }) {
+                HStack {
+                    Image(systemName: "checkmark")
+                    Text("Criar Ciclo")
+                }
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 65)
+                .background(Color(red: 0.65, green: 0.55, blue: 1.0))
+                .cornerRadius(20)
+            }
+        }
+        .onTapGesture {
+              
+                    focusedField = nil
+                }
+        .padding(.horizontal, 25)
+        .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+        .navigationBarHidden(true)
+        
+    }
+}
+
+struct InputField<Content: View>: View {
+    let title: String
+    let icon: String
+    let content: Content
+    
+    init(title: String, icon: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.black)
+            
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.gray)
+                content
+                    .font(.system(size: 16))
+            }
+        }
+    }
+}
+
+struct DatePickerField: View {
+    
+    let title: String
+    @Binding var date: Date
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.system(size: 14, weight: .bold))
+            
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundColor(.gray)
+                
+                DatePicker("", selection: $date, displayedComponents: .date)
+                    .labelsHidden()
+                    .environment(\.locale, Locale(identifier: "pt_BR"))
+//                    .colorMultiply(.clear)
+                
+                Spacer()
             }
         }
     }
@@ -61,12 +171,25 @@ final class NewCicloViewModel: ObservableObject {
     func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float, titulo: String) async {
         let dayCount = Calendar.current.datesBetween(startDate, and: endDate)
         let saldo = totalValue / Float(dayCount)
-        var days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
+        let days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
         let periodo = createPeriodoString(from: startDate, to: endDate)
         
         let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: 1)
  
         await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
+    }
+    
+    func verificarNumeros(orcamento: String) -> Float{
+
+        let orcamentoFiltrado = orcamento.filter { "0123456789,.".contains($0) }
+        
+        let orcamentoCerto = orcamentoFiltrado.replacingOccurrences(of: ",", with: ".")
+        
+        if let valorConvertido = Float(orcamentoCerto){
+            return valorConvertido
+        }
+        
+        return 0.0
     }
     
     private func createAllDays(dayCount: Int, startDate: Date, saldo: Float) -> [DiaSoftex] {
@@ -86,23 +209,14 @@ final class NewCicloViewModel: ObservableObject {
     }
     
     private func postToNetwork(newCiclo: CicloSoftex, daysCount: Int) async {
-        // Network
         do {
             try await NetworkManager.shared.postCiclo(newCiclo: newCiclo )
 
         } catch {
             print("Erro ao criar o ciclo:", error)
         }
-        printNewCicloData(newCiclo, numberOfDays: daysCount)
     }
     
-    private func printNewCicloData(_ newCiclo: CicloSoftex, numberOfDays: Int) {
-        let text = """
-            \(newCiclo.periodo)
-            Quantidade de Dias: \(numberOfDays)
-            Valor Total: \(newCiclo.valor_total.formatted(.currency(code: "BRL")))
-            Valor por Dia: \(newCiclo.diaria.formatted(.currency(code: "BRL")))
-            """
-        textResult = text
-    }
+    
+    
 }
