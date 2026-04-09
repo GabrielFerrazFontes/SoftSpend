@@ -15,7 +15,7 @@ struct CiclosListView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-
+            
             CardMainView()
             
             CicloGastosView() {
@@ -27,22 +27,7 @@ struct CiclosListView: View {
             .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
         }
         .task {
-                await viewModel.fetchAllCiclos1()
-        }
-        .sheet(isPresented: $addNewGastoSheet) {
-            AddNewGastoSheetView(
-                selectedDia: viewModel.actualCiclo.dias.first!,
-                dias: viewModel.actualCiclo.dias
-            ) { title, value, dia in
-                
-                Task {
-                    try await viewModel.createNewGasto(
-                        title: title,
-                        value: value,
-                        dia: dia
-                    )
-                }
-            }
+            await viewModel.fetchAllCiclos1()
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -69,15 +54,15 @@ final class CiclosListViewModel: ObservableObject {
         if hasLoadedOnce { return }
         
         let cacheData = UserDefaults.standard.data(forKey: "ultimo_ciclo_cache")
-            
-            if let data = cacheData {
-                if let cache = try? await Task.detached(priority: .userInitiated, operation: {
-                    try JSONDecoder().decode(CicloSoftex.self, from: data)
-                }).value {
-                    self.actualCiclo = cache
-                    print("Cache carregado em background")
-                }
+        
+        if let data = cacheData {
+            if let cache = try? await Task.detached(priority: .userInitiated, operation: {
+                try JSONDecoder().decode(CicloSoftex.self, from: data)
+            }).value {
+                self.actualCiclo = cache
+                print("Cache carregado em background")
             }
+        }
         
         do {
             let ciclos = try await NetworkManager.shared.fetchAllCiclos()
@@ -88,17 +73,20 @@ final class CiclosListViewModel: ObservableObject {
                 self.allCiclos = ciclos
             }
             
-            let cicloFinal = ciclos[self.index]
-            
             self.index = self.allCiclos.count - 1
+            
+            if self.index >= 0 {
+                let cicloParaSalvar = self.allCiclos[self.index]
+                self.actualCiclo = cicloParaSalvar
+                
+                self.salvarNoCache(ciclo: cicloParaSalvar)
+            }
             
             if self.index >= 0 {
                 self.actualCiclo = self.allCiclos[self.index]
             }
             
-            self.salvarNoCache(ciclo: cicloFinal)
-            
-            if self.actualCiclo.backendId != nil {
+            if self.actualCiclo.backendId != nil || ciclos.isEmpty {
                 self.isLoading = false
             }
             
@@ -111,6 +99,17 @@ final class CiclosListViewModel: ObservableObject {
             self.actualCiclo = self.allCiclos[0]
             self.hasLoadedOnce = true
         }
+    }
+    
+    func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float, titulo: String) async {
+        let dayCount = Calendar.current.datesBetween(startDate, and: endDate)
+        let saldo = totalValue / Float(dayCount)
+        let days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
+        let periodo = createPeriodoString(from: startDate, to: endDate)
+        
+        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: 1)
+ 
+        await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
     }
     
     func nextCiclo() {
@@ -133,17 +132,42 @@ final class CiclosListViewModel: ObservableObject {
         }
     }
     
-//    private func updateCicloInfo() {
-//        let available = self.actualCiclo.valor_total - self.actualCiclo.gasto_total
-//        self.gastosInfo = GastosDia(valor: actualCiclo.gasto_total, titulo: "Gasto")
-//        self.availableInfo = GastosDia(valor: available, titulo: "Disponivel")
-//    }
+    private func createAllDays(dayCount: Int, startDate: Date, saldo: Float) -> [DiaSoftex] {
+        var days: [DiaSoftex] = []
+        for i in 0...dayCount - 1 {
+            let time = 86400 * i
+            let date = startDate.addingTimeInterval(TimeInterval(time))
+            days.append(DiaSoftex(gastos: [], data: date, saldo: saldo))
+        }
+        return days
+    }
     
-    func createNewGasto( title: String, value: Decimal, dia: DiaSoftex) async throws {
+    private func createPeriodoString(from: Date, to: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM"
+        return "\(dateFormatter.string(from: from)) - \(dateFormatter.string(from: to))"
+    }
+    
+    private func postToNetwork(newCiclo: CicloSoftex, daysCount: Int) async {
+        do {
+            let novoCiclo = try await NetworkManager.shared.postCiclo(newCiclo: newCiclo )
+            
+            DispatchQueue.main.async {
+                        self.allCiclos.append(novoCiclo)
+                        self.actualCiclo = novoCiclo
+                        self.index = self.allCiclos.count - 1
+                    }
+
+        } catch {
+            print("Erro ao criar o ciclo:", error)
+        }
+    }
+    
+    func createNewGasto( title: String, value: Decimal, dia: DiaSoftex, categoria: Categoria) async throws {
         let valueFloat = Float(value.description) ?? 0.0
         
         do {
-            let gasto = GastosDia(valor: valueFloat, titulo: title)
+            let gasto = GastosDia(valor: valueFloat, titulo: title, categoria: categoria)
             
             let novoGasto = try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: dia.backendId!)
             

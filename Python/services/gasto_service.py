@@ -14,6 +14,7 @@ def criar_gasto(db: Session, dia_id: int, gasto: GastoRequest):
     novo_gasto = models.Gasto(
         titulo=gasto.titulo,
         valor=gasto.valor,
+        categoria=gasto.categoria,
         dia_id=dia_id
     )
 

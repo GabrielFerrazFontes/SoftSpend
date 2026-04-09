@@ -11,4 +11,4 @@ class Dia(Base):
     saldo = Column(Float)
 
     ciclo = relationship("Ciclo", back_populates="dias")
-    gastos = relationship("Gasto", back_populates="dia")
+    gastos = relationship("Gasto", back_populates="dia", cascade="all, delete-orphan")

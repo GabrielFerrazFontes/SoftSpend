@@ -10,9 +10,10 @@ import Combine
 
 struct CicloGastosView: View {
     @EnvironmentObject var viewModel: CicloGastosViewModel
+    @EnvironmentObject var listViewModel: CiclosListViewModel
     
     let action: () -> Void
-    let deleteAction: (UUID, Int) -> Void
+    let deleteAction: (Int, Int) -> Void
     
     func removerGastoEspecifico(dia: DiaSoftex, index: Int) {
         let indexSet = IndexSet(integer: index)
@@ -88,7 +89,7 @@ struct CicloGastosView: View {
                                     }
                                     
                                 }
-                                .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+                                .skeleton(isLoading: listViewModel.isLoading)
 
                                 //                            .padding()
                             }
@@ -106,18 +107,18 @@ struct CicloGastosView: View {
             if Calendar.current.isDateInToday(dia.data) {
                 Text("HOJE")
                     .frame(width: 90)
-                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+                    .skeleton(isLoading: listViewModel.isLoading)
                     
                 
             } else if Calendar.current.isDateInYesterday(dia.data) {
                 Text("ONTEM")
                     .frame(width: 90)
-                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+                    .skeleton(isLoading: listViewModel.isLoading)
                 
             } else {
                 Text(viewModel.dateToString(date: dia.data))
                     .frame(width: 90)
-                    .skeleton(isLoading: viewModel.cicloViewModel.isLoading)
+                    .skeleton(isLoading: listViewModel.isLoading)
             }
             
             Spacer()
@@ -190,9 +191,7 @@ final class CicloGastosViewModel: ObservableObject {
     
     @Published var ciclo: CicloSoftex
     @Published var searchGastoText: String = ""
-    
-    let cicloViewModel: CiclosListViewModel = CiclosListViewModel()
-    
+
     init(ciclo: CicloSoftex) {
         self.ciclo = ciclo
     }

@@ -32,9 +32,9 @@ final class NetworkManager {
     }
     
     
-    func postCiclo(newCiclo: CicloSoftex) async throws -> Void {
+    func postCiclo(newCiclo: CicloSoftex) async throws -> CicloSoftex {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/ciclos") else { return }
+        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/ciclos") else { throw URLError(.badURL)}
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -62,6 +62,10 @@ final class NetworkManager {
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
+        
+        let cicloCriado = try decoder.decode(CicloSoftex.self, from: data)
+        
+        return cicloCriado
         
     }
     

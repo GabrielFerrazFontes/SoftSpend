@@ -11,12 +11,12 @@ import Combine
 struct NewCicloView: View {
     
     private enum Field: Int, CaseIterable {
-            case nomeCiclo, orcamento
-        }
+        case nomeCiclo, orcamento
+    }
     
     @Environment(\.dismiss) var dismiss
     
-    @EnvironmentObject var novoCicloViewModel: NewCicloViewModel
+    @EnvironmentObject var cicloViewModel: CiclosListViewModel
     
     @State private var nomeCiclo: String = ""
     @State private var orcamentoString: String = ""
@@ -59,7 +59,7 @@ struct NewCicloView: View {
                         TextField("0,00", text: $orcamentoString)
                             .keyboardType(.decimalPad)
                             .onChange(of: orcamentoString) { oldValue, newValue in
-                                orcamento = novoCicloViewModel.verificarNumeros(orcamento: newValue)
+                                orcamento = verificarNumeros(orcamento: newValue)
                             }
                             .font(.system(size: 18, weight: .heavy))
                             .focused($focusedField, equals: .orcamento)
@@ -82,7 +82,11 @@ struct NewCicloView: View {
             
             Button(action: {
                 Task{
-                   await novoCicloViewModel.createNewCiclo(startDate: dataInicio, endDate: dataFim, totalValue: Float(orcamento), titulo: nomeCiclo)
+                    await cicloViewModel.createNewCiclo(startDate: dataInicio, endDate: dataFim, totalValue: Float(orcamento), titulo: nomeCiclo)
+                    
+                    await MainActor.run {
+                        dismiss()
+                    }
                 }
             }) {
                 HStack {
@@ -98,13 +102,26 @@ struct NewCicloView: View {
             }
         }
         .onTapGesture {
-              
-                    focusedField = nil
-                }
+            
+            focusedField = nil
+        }
         .padding(.horizontal, 25)
         .background(Color(red: 0.98, green: 0.98, blue: 0.98))
         .navigationBarHidden(true)
         
+    }
+    
+    func verificarNumeros(orcamento: String) -> Float{
+        
+        let orcamentoFiltrado = orcamento.filter { "0123456789,.".contains($0) }
+        
+        let orcamentoCerto = orcamentoFiltrado.replacingOccurrences(of: ",", with: ".")
+        
+        if let valorConvertido = Float(orcamentoCerto){
+            return valorConvertido
+        }
+        
+        return 0.0
     }
 }
 
@@ -152,7 +169,7 @@ struct DatePickerField: View {
                 DatePicker("", selection: $date, displayedComponents: .date)
                     .labelsHidden()
                     .environment(\.locale, Locale(identifier: "pt_BR"))
-//                    .colorMultiply(.clear)
+                //                    .colorMultiply(.clear)
                 
                 Spacer()
             }
@@ -168,54 +185,9 @@ struct DatePickerField: View {
 final class NewCicloViewModel: ObservableObject {
     @Published var textResult = ""
     
-    func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float, titulo: String) async {
-        let dayCount = Calendar.current.datesBetween(startDate, and: endDate)
-        let saldo = totalValue / Float(dayCount)
-        let days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
-        let periodo = createPeriodoString(from: startDate, to: endDate)
-        
-        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: 1)
- 
-        await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
-    }
     
-    func verificarNumeros(orcamento: String) -> Float{
-
-        let orcamentoFiltrado = orcamento.filter { "0123456789,.".contains($0) }
-        
-        let orcamentoCerto = orcamentoFiltrado.replacingOccurrences(of: ",", with: ".")
-        
-        if let valorConvertido = Float(orcamentoCerto){
-            return valorConvertido
-        }
-        
-        return 0.0
-    }
     
-    private func createAllDays(dayCount: Int, startDate: Date, saldo: Float) -> [DiaSoftex] {
-        var days: [DiaSoftex] = []
-        for i in 0...dayCount - 1 {
-            let time = 86400 * i
-            let date = startDate.addingTimeInterval(TimeInterval(time))
-            days.append(DiaSoftex(gastos: [], data: date, saldo: saldo))
-        }
-        return days
-    }
     
-    private func createPeriodoString(from: Date, to: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM"
-        return "\(dateFormatter.string(from: from)) - \(dateFormatter.string(from: to))"
-    }
-    
-    private func postToNetwork(newCiclo: CicloSoftex, daysCount: Int) async {
-        do {
-            try await NetworkManager.shared.postCiclo(newCiclo: newCiclo )
-
-        } catch {
-            print("Erro ao criar o ciclo:", error)
-        }
-    }
     
     
     

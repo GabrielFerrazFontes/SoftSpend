@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     
-    @StateObject var viewModel = CiclosListViewModel()
+    @EnvironmentObject var viewModel: CiclosListViewModel
     let newCicloViewModel = NewCicloViewModel()
     @State var sheetview = false
 
@@ -53,8 +53,8 @@ struct MainView: View {
                             .foregroundColor(.white)
                     }
                 }.sheet(isPresented: $sheetview){
-                    NewCicloView()
-                        .environmentObject(newCicloViewModel)
+                    AddNewGastoSheetView(dias: viewModel.actualCiclo.dias)
+                        .environmentObject(viewModel)
                 }
                 .offset(y: -24)
 

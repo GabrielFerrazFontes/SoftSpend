@@ -40,9 +40,3 @@ struct CicloInfoView: View {
         }
     }
 }
-
-
-
-#Preview {
-    CicloInfoView(gastos: .constant(GastosDia(valor: 200, titulo: "Gasto")), available: .constant(GastosDia(valor: 2000, titulo: "Sobrando")))
-}

@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct SoftexVamoApp: App {
+    @StateObject var listViewModel = CiclosListViewModel()
+    
     var body: some Scene {
         WindowGroup {
             MainView()
+                .environmentObject(listViewModel)
         }
     }
 }
