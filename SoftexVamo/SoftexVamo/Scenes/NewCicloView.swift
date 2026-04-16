@@ -102,7 +102,6 @@ struct NewCicloView: View {
             }
         }
         .onTapGesture {
-            
             focusedField = nil
         }
         .padding(.horizontal, 25)

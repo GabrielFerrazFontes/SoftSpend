@@ -163,11 +163,9 @@ final class CiclosListViewModel: ObservableObject {
         }
     }
     
-    func createNewGasto( title: String, value: Decimal, dia: DiaSoftex, categoria: Categoria) async throws {
-        let valueFloat = Float(value.description) ?? 0.0
-        
+    func createNewGasto( title: String, value: Float, dia: DiaSoftex, categoria: Categoria) async throws {
         do {
-            let gasto = GastosDia(valor: valueFloat, titulo: title, categoria: categoria)
+            let gasto = GastosDia(valor: value, titulo: title, categoria: categoria)
             
             let novoGasto = try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: dia.backendId!)
             

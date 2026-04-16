@@ -14,6 +14,7 @@ enum Categoria: String, Codable, CaseIterable, Identifiable {
     case COMPRAS = "COMPRAS"
     case OUTROS = "OUTROS"
     
+    
     var id : String {
         self.rawValue
     }
@@ -25,6 +26,7 @@ enum Categoria: String, Codable, CaseIterable, Identifiable {
             case .LAZER: return "Lazer"
             case .COMPRAS: return "Compras"
             case .OUTROS: return "Outros"
+            
             }
         }
 }

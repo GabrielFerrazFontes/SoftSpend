@@ -63,14 +63,13 @@ struct AnimatedMask: AnimatableModifier {
     }
     
     func body(content: Content) -> some View {
-        // Removido o scaleEffect(3) pois o LinearGradient nativo já preenche a View inteira
         content.mask(GradientMask(phase: phase))
     }
 }
 
 struct GradientMask: View {
     let phase: CGFloat
-    let centerColor = Color.white.opacity(0.4) // Intensidade do feixe (pode ajustar)
+    let centerColor = Color.white.opacity(0.4)
     let edgeColor = Color.white.opacity(1)
     
     var body: some View {
@@ -81,7 +80,7 @@ struct GradientMask: View {
                 .init(color: edgeColor, location: phase + 0.15)
             ]),
             startPoint: .topLeading,
-            endPoint: .bottomTrailing // Isso cria a diagonal de forma automática e segura
+            endPoint: .bottomTrailing
         )
     }
 }
