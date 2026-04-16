@@ -43,29 +43,17 @@ struct AddNewGastoSheetView: View {
     @FocusState private var focusedField: Field?
     
     var body: some View {
-        NavigationStack {
+        ScrollView {
             VStack(alignment: .leading, spacing: 20){
-                Button(action: { dismiss() }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("Voltar")
-                    }
-                    .foregroundColor(.purple)
-                    .font(.system(size: 18, weight: .medium))
-                }
-                .padding(.top, 10)
-                
-//                Divider()
                 
                 Text("Novo Gasto")
                     .font(.system(size: 34, weight: .bold))
-//                    .padding(.bottom, 10)
                 
-                VStack{
+                VStack {
                     Text("VALOR DA DESPESA")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(grayText.opacity(0.7))
-                    HStack{
+                    HStack {
                         Text("R$")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(grayText.opacity(0.4))
@@ -74,7 +62,6 @@ struct AddNewGastoSheetView: View {
                             .multilineTextAlignment(.center)
                             .font(.system(size: 30, weight: .bold))
                     }
-                    
                 }
                 .padding(25)
                 .background(Color.white)
@@ -83,10 +70,7 @@ struct AddNewGastoSheetView: View {
                 
                 VStack(alignment: .leading, spacing: 25) {
                     InputField(title: "Descrição", icon: "") {
-                        TextField("Ex: Almoço, Uber...", text: $valueString)
-                            .onChange(of: valueString) { oldValue, newValue in
-                                value = verificarNumeros(orcamento: newValue)
-                            }
+                        TextField("Ex: Almoço, Uber...", text: $title)
                             .font(.system(size: 18, weight: .medium))
                             .focused($focusedField, equals: .title)
                     }
@@ -97,28 +81,23 @@ struct AddNewGastoSheetView: View {
                     
                     Text("Categoria")
                         .font(.system(size: 14, weight: .bold))
+                    
                     LazyVGrid(columns: columns) {
                         ForEach(Categoria.allCases) { categoria in
-                            
                             let isSelected = (categoria == selectedCategoria)
-                            
                             VStack(spacing: 12) {
                                 Image(systemName: iconName(for: categoria))
                                     .font(.system(size: 20, weight: .regular))
                                     .frame(height: 30)
-                                
                                 Text(categoria.localizedName.uppercased())
                                     .font(.system(size: 10, weight: .bold))
-                                    .multilineTextAlignment(.center)
                                     .lineLimit(1)
                             }
                             .foregroundStyle(isSelected ? purplePrimary : grayText)
                             .padding(.vertical, 16)
                             .frame(maxWidth: .infinity)
-                            .background(
-                                RoundedRectangle(cornerRadius: 22)
-                                    .fill(isSelected ? purpleBackground : Color.white)
-                            )
+                            .background(isSelected ? purpleBackground : Color.white)
+                            .cornerRadius(22)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 22)
                                     .stroke(isSelected ? purplePrimary : grayBorder, lineWidth: isSelected ? 2 : 1)
@@ -130,24 +109,17 @@ struct AddNewGastoSheetView: View {
                             }
                         }
                     }
-                    .frame(height: 150)
-                    .padding(.vertical)
-                    
+                    .frame(minHeight: 150)
                 }
                 .padding(25)
                 .background(Color.white)
                 .cornerRadius(30)
                 .shadow(color: .black.opacity(0.05), radius: 15, x: 0, y: 10)
                 
-                Spacer()
-                
                 Button(action: {
-                    Task{
+                    Task {
                         try await viewModel.createNewGasto(title: title, value: value, dia: selectedDia, categoria: selectedCategoria)
-                        
-                        await MainActor.run {
-                            dismiss()
-                        }
+                        await MainActor.run { dismiss() }
                     }
                 }) {
                     HStack {
@@ -161,14 +133,32 @@ struct AddNewGastoSheetView: View {
                     .background(Color(red: 0.65, green: 0.55, blue: 1.0))
                     .cornerRadius(20)
                 }
-            }
-            .onTapGesture {
-                focusedField = nil
+                .padding(.top, 10)
             }
             .padding(.horizontal, 25)
-            .background(Color(red: 0.98, green: 0.98, blue: 0.98))
-            .navigationBarHidden(true)
+            .padding(.bottom, 50)
         }
+        .safeAreaInset(edge: .top) {
+            VStack(spacing: 0) {
+                HStack {
+                    Button(action: { dismiss() }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Voltar")
+                        }
+                        .foregroundColor(.purple)
+                        .font(.system(size: 18, weight: .medium))
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 25)
+                .padding(.vertical, 12)
+                .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+            }
+            .background(.white)
+        }
+        .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+        .onTapGesture { focusedField = nil }
     }
     
     func verificarNumeros(orcamento: String) -> Float{

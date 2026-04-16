@@ -52,7 +52,7 @@ struct MainView: View {
                             .font(.system(size: 30, weight: .light))
                             .foregroundColor(.white)
                     }
-                }.sheet(isPresented: $sheetview){
+                }.fullScreenCover(isPresented: $sheetview){
                     AddNewGastoSheetView(dias: viewModel.actualCiclo.dias)
                         .environmentObject(viewModel)
                 }
@@ -85,5 +85,6 @@ struct MainView: View {
 struct CustomTabBarView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
+            .environmentObject(CiclosListViewModel())
     }
 }
