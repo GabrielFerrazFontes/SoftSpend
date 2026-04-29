@@ -25,7 +25,7 @@ struct HistoricoView: View {
                             .fontWeight(.bold)
                             .padding(.horizontal)
                         Text("Todos os seu ciclos registrados")
-                            .foregroundStyle(Color.black.opacity(0.45))
+                            .foregroundStyle(Color("textSecondary"))
                             .padding(.horizontal)
                             .padding(.bottom)
                         ForEach(viewModel.allCiclos){ ciclo in
@@ -41,14 +41,14 @@ struct HistoricoView: View {
                         HStack(alignment: .center, spacing: 12) {
                             Image(systemName: "plus")
                                 .font(.system(size: 18))
-                                .foregroundStyle(Color.black.opacity(0.75))
+                                .foregroundStyle(Color("textPrimary"))
                                 .frame(width: 40, height: 40)
-                                .background(Color.black.opacity(0.02))
+                                .background(Color("cinza"))
                                 .cornerRadius(16)
                             
                             Text("Criar Novo Ciclo")
                                 .font(.system(size: 18, weight: .bold))
-                                .foregroundStyle(Color.black.opacity(0.35))
+                                .foregroundStyle(Color("textSecondary"))
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 100)
@@ -58,7 +58,7 @@ struct HistoricoView: View {
                                     Color.gray.opacity(0.4),
                                     style: StrokeStyle(lineWidth: 2, dash: [3])
                                 )
-                                .background(Color.white)
+                                .background(Color("cardBackground"))
                                 .cornerRadius(18)
                         }
                         .padding(.horizontal)

@@ -52,19 +52,21 @@ struct AddNewGastoSheetView: View {
                 VStack {
                     Text("VALOR DA DESPESA")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(grayText.opacity(0.7))
+                    
+                        
                     HStack {
                         Text("R$")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(grayText.opacity(0.4))
+                            .foregroundStyle(Color("textSecondary"))
                         Spacer()
                         TextField("0,00", text: $valueString)
                             .multilineTextAlignment(.center)
                             .font(.system(size: 30, weight: .bold))
                     }
                 }
+                
                 .padding(25)
-                .background(Color.white)
+                .background(Color("cardBackground"))
                 .cornerRadius(30)
                 .shadow(color: .black.opacity(0.05), radius: 15, x: 0, y: 10)
                 
@@ -93,10 +95,10 @@ struct AddNewGastoSheetView: View {
                                     .font(.system(size: 10, weight: .bold))
                                     .lineLimit(1)
                             }
-                            .foregroundStyle(isSelected ? purplePrimary : grayText)
+                            .foregroundStyle(isSelected ? purplePrimary : Color("textSecondary"))
                             .padding(.vertical, 16)
                             .frame(maxWidth: .infinity)
-                            .background(isSelected ? purpleBackground : Color.white)
+                            .background(isSelected ? purpleBackground : Color("cinza"))
                             .cornerRadius(22)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 22)
@@ -112,7 +114,7 @@ struct AddNewGastoSheetView: View {
                     .frame(minHeight: 150)
                 }
                 .padding(25)
-                .background(Color.white)
+                .background(Color("cardBackground"))
                 .cornerRadius(30)
                 .shadow(color: .black.opacity(0.05), radius: 15, x: 0, y: 10)
                 
@@ -153,11 +155,11 @@ struct AddNewGastoSheetView: View {
                 }
                 .padding(.horizontal, 25)
                 .padding(.vertical, 12)
-                .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+                .background(Color("cinza"))
             }
-            .background(.white)
+            .background(Color("cardBackground"))
         }
-        .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+        .background(Color("surfaceBackground"))
         .onTapGesture { focusedField = nil }
     }
     

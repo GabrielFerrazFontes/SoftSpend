@@ -32,7 +32,7 @@ struct CardCiclosView: View {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(viewModel.actualCiclo.id == ciclo.id ?
                           AnyShapeStyle(corFundoTela) :
-                            AnyShapeStyle(Color.white))
+                            AnyShapeStyle(Color("cardBackground")))
                     .id(viewModel.actualCiclo.id)
                     .frame(maxWidth: .infinity, maxHeight: 180)
                     .shadow(radius: 10)
@@ -52,20 +52,20 @@ struct CardCiclosView: View {
                             Text(ciclo.titulo)
                                 .font(.system(size: 20, weight: .bold))
                             Text(ciclo.periodo)
-                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
                                 .font(.system(size: 12, weight: .bold))
                         }
                         
                         Spacer()
                         
                         Image(systemName: "chevron.right")
-                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
                             .font(.system(size: 14))
                     }
                     
                     HStack{
                         Text("Total Gasto")
-                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color.black.opacity(0.45))
+                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
                             .font(.system(size: 14, weight: .bold))
                         Spacer()
                         Text("\(ciclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
@@ -102,7 +102,7 @@ struct CardCiclosView: View {
                 viewModel.selectedTab = 0
             }
         //
-        .foregroundColor(viewModel.actualCiclo.id == ciclo.id ? .white : .black)
+        .foregroundColor(viewModel.actualCiclo.id == ciclo.id ? .white : Color("textPrimary"))
         .padding(.bottom, 10)
         //        .ignoresSafeArea()
         

@@ -75,7 +75,7 @@ struct MainView: View {
             }
             .padding(.top, 12)
             .padding(.bottom, 24)
-            .background(Color.white)
+            .background(Color("surfaceBackground"))
             .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: -5)
         }
         .ignoresSafeArea(.all, edges: .bottom)

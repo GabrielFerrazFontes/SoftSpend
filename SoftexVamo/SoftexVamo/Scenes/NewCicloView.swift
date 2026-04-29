@@ -54,7 +54,7 @@ struct NewCicloView: View {
                 InputField(title: "Orçamento Total", icon: "briefcase") {
                     HStack {
                         Text("R$")
-                            .foregroundStyle(Color(.secondaryLabel).opacity(0.65))
+                            .foregroundStyle(Color("textSecondary").opacity(0.65))
                             .font(.system(size: 18, weight: .medium))
                         TextField("0,00", text: $orcamentoString)
                             .keyboardType(.decimalPad)
@@ -74,7 +74,7 @@ struct NewCicloView: View {
                 }
             }
             .padding(25)
-            .background(Color.white)
+            .background(Color("cardBackground"))
             .cornerRadius(30)
             .shadow(color: .black.opacity(0.05), radius: 15, x: 0, y: 10)
             
@@ -105,7 +105,7 @@ struct NewCicloView: View {
             focusedField = nil
         }
         .padding(.horizontal, 25)
-        .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+        .background(Color("surfaceBackground"))
         .navigationBarHidden(true)
         
     }
@@ -139,7 +139,7 @@ struct InputField<Content: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(Color("textPrimary"))
             
             HStack(spacing: 12) {
                 Image(systemName: icon)

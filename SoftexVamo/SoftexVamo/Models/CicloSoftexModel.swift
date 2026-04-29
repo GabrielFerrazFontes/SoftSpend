@@ -29,6 +29,18 @@ enum Categoria: String, Codable, CaseIterable, Identifiable {
             
             }
         }
+    
+    var systemImageName: String {
+            switch self {
+            case .ALIMENTACAO: return "fork.knife"
+            case .TRANSPORTE: return "car.fill"
+            case .LAZER: return "gamecontroller.fill"
+            case .COMPRAS:
+                return "mappin"
+            case .OUTROS:
+                return "car"
+            }
+        }
 }
 
 struct CicloSoftex: Codable, Identifiable {

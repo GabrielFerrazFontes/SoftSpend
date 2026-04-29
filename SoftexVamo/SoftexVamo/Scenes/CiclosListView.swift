@@ -30,6 +30,7 @@ struct CiclosListView: View {
             await viewModel.fetchAllCiclos1()
         }
         .navigationBarBackButtonHidden(true)
+        .background(.backgroundCor)
     }
 }
 

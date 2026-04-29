@@ -35,7 +35,7 @@ struct CicloGastosView: View {
                             .textFieldStyle(PlainTextFieldStyle())
                     }
                     .padding(12)
-                    .background(Color.white)
+                    .background(Color("cinza"))
                     .cornerRadius(15)
                     .shadow(
                         color: Color.black.opacity(0.1),
@@ -50,7 +50,7 @@ struct CicloGastosView: View {
                     Image(systemName: "line.3.horizontal.decrease")
                         .padding(.vertical, 16)
                         .padding(.horizontal, 12)
-                        .background(Color.white)
+                        .background(Color("cinza"))
                         .cornerRadius(15)
                         .shadow(
                             color: Color.black.opacity(0.1),
@@ -66,9 +66,12 @@ struct CicloGastosView: View {
                         Section(header: createSectionHeader(dia: dia)) {
                             ZStack{
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white)
+                                    .foregroundStyle(Color("cinza"))
+
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    
                                     .shadow(radius: 2)
+                                    
                                 VStack{
                                     ForEach(Array(dia.gastos.enumerated()), id: \.element.id) { index, gasto in
                                         createGastoCell(gasto: gasto) {
@@ -83,23 +86,23 @@ struct CicloGastosView: View {
                                                 .padding(.horizontal, -10)
                                         }
                                     }
-                                    .onDelete { indexSet in
-                                        let gastoID = viewModel.deleteGasto(dia: dia, offsets: indexSet)
-                                        deleteAction(dia.id, gastoID)
-                                    }
-                                    
                                 }
                                 .skeleton(isLoading: listViewModel.isLoading)
 
                                 //                            .padding()
                             }
+//                            .background(Color("cinza"))
+//                            .background(Color.cardBackground)
                         }
+                        
                     }
                 }
+                
                 
             }
             .padding()
         }
+//        .background(.backgroundCor)
     }
     
     @ViewBuilder func createSectionHeader(dia: DiaSoftex) -> some View {
@@ -123,22 +126,23 @@ struct CicloGastosView: View {
             
             Spacer()
         }
-        
         .padding(.top)
         .font(.system(size: 16, weight: .medium))
-        .foregroundStyle(Color.black.opacity(0.55))
+        .foregroundStyle(Color("textSecondary"))
         
     }
     
     @ViewBuilder func createGastoCell(gasto: GastosDia, onDelete: @escaping () -> Void) -> some View {
         HStack {
             
-            Image(systemName: "car")
+            Image(systemName: gasto.categoria.systemImageName)
                 .font(.system(size: 25, weight: .bold))
+                .frame(width: 30, height: 30)
                 .padding()
                 .foregroundStyle(Color.white)
                 .background(Color.orange)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                
             
             
             VStack(alignment: .leading){
@@ -146,9 +150,9 @@ struct CicloGastosView: View {
                     .font(.system(size: 18, weight: .bold))
                     .padding(.bottom, 10)
                 
-                Text("Locomoção")
+                Text(gasto.categoria.localizedName)
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(Color.black.opacity(0.35))
+                    .foregroundStyle(Color("textSecondary").opacity(0.7))
             }
             .padding(6)
             
@@ -171,8 +175,10 @@ struct CicloGastosView: View {
                 .buttonStyle(.plain)
             }
         }
+        .background(Color("cinza"))
         
         .frame(maxWidth: .infinity, maxHeight: 70)
+//
         
         
     }
@@ -185,6 +191,7 @@ struct CicloGastosView: View {
         print("")
     }
     .environmentObject(CicloGastosViewModel(ciclo: CicloSoftex.example))
+    .environmentObject(CiclosListViewModel())
 }
 
 final class CicloGastosViewModel: ObservableObject {
