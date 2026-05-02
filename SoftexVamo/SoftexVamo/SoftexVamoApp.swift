@@ -11,11 +11,19 @@ import SwiftData
 @main
 struct SoftexVamoApp: App {
     @StateObject var listViewModel = CiclosListViewModel()
+    @StateObject var authService = AuthService.shared
     
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .environmentObject(listViewModel)
+            Group {
+                if authService.isAuthenticated {
+                    MainView()
+                        .environmentObject(listViewModel)
+                } else {
+                    LoginView()
+                        .environmentObject(authService)
+                }
+            }
         }
     }
 }

@@ -10,27 +10,88 @@ import Combine
 
 struct CiclosListView: View {
     @EnvironmentObject var viewModel: CiclosListViewModel
+    @StateObject var authService = AuthService.shared
+    @State private var showMenu = false
+//    @StateObject var user = AuthService.shared.currentUser!
+    
+    private var currentUser: UserModel? {
+            AuthService.shared.currentUser
+    }
+    
+    let corFundoTela = LinearGradient(
+        colors: [Color("roxoInicial"),
+                 Color("roxoFinal")],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
     
     @State var addNewGastoSheet: Bool = false
     
     var body: some View {
-        VStack(alignment: .leading) {
-            
-            CardMainView()
-            
-            CicloGastosView() {
-                addNewGastoSheet.toggle()
-            } deleteAction: { diaId, gastoID in
-                Task { try await viewModel.deleteGasto(gastoID: gastoID) }
+        NavigationStack{
+            VStack(alignment: .leading) {
+                HStack{
+                    VStack(alignment: .leading){
+                        Text("Controle Financeiro")
+                            .foregroundStyle(Color("textSecondary"))
+                        Text("Seus Gastos")
+                            .bold()
+                            .font(.title)
+                    }
+                    
+                    Spacer()
+                    
+                    ZStack(alignment: .topTrailing) {
+                        Button {
+                            withAnimation(.spring()) {
+                                showMenu.toggle()
+                            }
+                        } label: {
+                            HStack {
+                                Text(currentUser?.nome.prefix(2).uppercased() ?? "??")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(10)
+                                    .background(Color("roxoInicial"))
+                                    .clipShape(Circle())
+                                
+                                Image(systemName: "chevron.up")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .rotationEffect(.degrees(showMenu ? 0 : 180))
+                                    .foregroundStyle(Color("textPrimary"))
+                            }
+                            .padding(8)
+                            .background(Color("cardBackground"))
+                            .clipShape(Capsule())
+                            .shadow(color: .black.opacity(0.1), radius: 4)
+                            
+                        }
+                    }
+
+                }.padding()
+                
+                CardMainView()
+                
+                CicloGastosView() {
+                    addNewGastoSheet.toggle()
+                } deleteAction: { diaId, gastoID in
+                    Task { try await viewModel.deleteGasto(gastoID: gastoID) }
+                }
+                .id(viewModel.actualCiclo.id)
+                .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
             }
-            .id(viewModel.actualCiclo.id)
-            .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
+            .task {
+                await viewModel.fetchAllCiclos1()
+            }
+            .navigationBarBackButtonHidden(true)
+            .background(.backgroundCor)
+            .overlay(alignment: .topTrailing) {
+                if showMenu {
+                    MenuView(showMenu: $showMenu)
+                        .offset(x: -16, y: 70)
+                }
+            }
         }
-        .task {
-            await viewModel.fetchAllCiclos1()
-        }
-        .navigationBarBackButtonHidden(true)
-        .background(.backgroundCor)
     }
 }
 
@@ -42,6 +103,11 @@ final class CiclosListViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var selectedTab: Int = 0
     
+    private var currentUser: UserModel? {
+            AuthService.shared.currentUser
+    }
+    
+    
     private var hasLoadedOnce = false
     var index: Int = 0
     
@@ -52,21 +118,25 @@ final class CiclosListViewModel: ObservableObject {
     @MainActor
     func fetchAllCiclos1() async {
         
+        guard let user = currentUser else {
+                    print("Erro: Usuário não está logado")
+                    return
+        }
+        
         if hasLoadedOnce { return }
         
         let cacheData = UserDefaults.standard.data(forKey: "ultimo_ciclo_cache")
         
         if let data = cacheData {
-            if let cache = try? await Task.detached(priority: .userInitiated, operation: {
-                try JSONDecoder().decode(CicloSoftex.self, from: data)
-            }).value {
+            if let cache = try? JSONDecoder().decode(CicloSoftex.self, from: data)
+            {
                 self.actualCiclo = cache
                 print("Cache carregado em background")
             }
         }
         
         do {
-            let ciclos = try await NetworkManager.shared.fetchAllCiclos()
+            let ciclos = try await NetworkManager.shared.fetchAllCiclos(user: user)
             
             if ciclos.isEmpty {
                 self.allCiclos = CicloSoftex.examples
@@ -108,7 +178,12 @@ final class CiclosListViewModel: ObservableObject {
         let days: [DiaSoftex] = createAllDays(dayCount: dayCount, startDate: startDate, saldo: saldo)
         let periodo = createPeriodoString(from: startDate, to: endDate)
         
-        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: 1)
+        guard let user = currentUser else {
+                    print("Erro: Usuário não está logado")
+                    return
+                }
+        
+        let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: user.id)
  
         await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
     }

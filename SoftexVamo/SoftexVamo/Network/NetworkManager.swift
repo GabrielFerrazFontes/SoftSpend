@@ -13,9 +13,9 @@ final class NetworkManager {
     private var cancellables: Set<AnyCancellable> = []
     static let shared = NetworkManager()
     
-    func fetchAllCiclos() async throws -> [CicloSoftex] {
+    func fetchAllCiclos(user: UserModel) async throws -> [CicloSoftex] {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/usuario/ciclos/1") else { return [] }
+        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/usuario/ciclos/\(user.id)") else { return [] }
         
         let session = URLSession(
             configuration: .default,
@@ -30,7 +30,6 @@ final class NetworkManager {
         
         return try decoder.decode([CicloSoftex].self, from: data)
     }
-    
     
     func postCiclo(newCiclo: CicloSoftex) async throws -> CicloSoftex {
         
@@ -68,7 +67,6 @@ final class NetworkManager {
         return cicloCriado
         
     }
-    
     
     func postGasto(newGasto: GastosDia, diaId: Int) async throws -> GastosDia {
         

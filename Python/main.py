@@ -4,6 +4,7 @@ from database import *
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.ciclo_controller import router as ciclo_router
 from controllers.gasto_controller import router as gasto_router
+from controllers.auth_controller import router as auth_router
 
 import models, dtos
 
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(ciclo_router)
 app.include_router(gasto_router)
+app.include_router(auth_router)
 
 Base.metadata.create_all(bind=engine)
 
