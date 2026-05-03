@@ -102,7 +102,9 @@ struct CicloGastosView: View {
             }
             .padding()
         }
-//        .background(.backgroundCor)
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
     
     @ViewBuilder func createSectionHeader(dia: DiaSoftex) -> some View {
@@ -140,7 +142,7 @@ struct CicloGastosView: View {
                 .frame(width: 30, height: 30)
                 .padding()
                 .foregroundStyle(Color.white)
-                .background(Color.orange)
+                .background(gasto.categoria.color)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
             

@@ -8,11 +8,68 @@
 import SwiftUI
 
 struct EmptyHistoricoView: View {
+    let action: () -> Void
+    
+    let corFundoTela = LinearGradient(
+        colors: [Color("roxoInicial"),
+                 Color("roxoFinal")],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            
+            Circle()
+                .fill(AnyShapeStyle(corFundoTela))
+                .frame(maxWidth: 150, maxHeight: 150)
+                .overlay(
+                    Image(systemName: "clock")
+                        .font(.system(size: 60))
+                        .foregroundColor(.white)
+                )
+                .shadow(color: Color.purple.opacity(0.3), radius: 20, x: 0, y: 10)
+                .padding()
+            
+            Text("Nenhum ciclo ainda")
+                .font(Font.title.bold())
+                .padding(.top)
+            
+            Text("Seu histórico aparecerá aqui assim que você criar seu primeiro ciclo")
+                .foregroundStyle(Color("textSecondary"))
+                .multilineTextAlignment(.center)
+                .padding(.vertical, 5)
+            
+            Button(action: action) {
+                HStack{
+                    Image(systemName: "plus")
+                    
+                    Text("Criar Ciclo")
+                    
+                }
+                .foregroundStyle(Color.white)
+                .bold()
+                .font(.title3)
+                .frame(width: 200, height: 60)
+                .background(
+                    LinearGradient(
+                        colors: [Color("roxoInicial"), Color("roxoFinal")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .shadow(color: Color("roxoFinal").opacity(0.3), radius: 10, x: 0, y: 5)
+            }
+            .padding()
+            
+        }
+        .padding()
     }
 }
 
 #Preview {
-    EmptyHistoricoView()
+    EmptyHistoricoView{
+        print("Criar ciclo")
+    }
 }

@@ -25,7 +25,7 @@ struct MenuView: View {
                         )
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(authService.currentUser?.nome ?? "Usuário")
+                        Text(authService.currentUser?.username ?? "Usuário")
                             .font(.system(size: 16, weight: .bold))
                         Text(authService.currentUser?.email ?? "email@exemplo.com")
                             .font(.system(size: 12))

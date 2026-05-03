@@ -72,6 +72,7 @@ final class AuthService: ObservableObject {
     func logout() {
         UserDefaults.standard.removeObject(forKey: tokenKey)
         UserDefaults.standard.removeObject(forKey: userKey)
+        UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
         currentUser = nil
         isAuthenticated = false
     }

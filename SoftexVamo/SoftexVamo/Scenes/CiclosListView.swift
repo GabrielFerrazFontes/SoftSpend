@@ -12,6 +12,7 @@ struct CiclosListView: View {
     @EnvironmentObject var viewModel: CiclosListViewModel
     @StateObject var authService = AuthService.shared
     @State private var showMenu = false
+    let newCicloViewModel = NewCicloViewModel()
 //    @StateObject var user = AuthService.shared.currentUser!
     
     private var currentUser: UserModel? {
@@ -26,10 +27,11 @@ struct CiclosListView: View {
     )
     
     @State var addNewGastoSheet: Bool = false
+    @State var addNewCicloSheet: Bool = false
     
     var body: some View {
         NavigationStack{
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack{
                     VStack(alignment: .leading){
                         Text("Controle Financeiro")
@@ -70,20 +72,34 @@ struct CiclosListView: View {
 
                 }.padding()
                 
-                CardMainView()
-                
-                CicloGastosView() {
-                    addNewGastoSheet.toggle()
-                } deleteAction: { diaId, gastoID in
-                    Task { try await viewModel.deleteGasto(gastoID: gastoID) }
+                if viewModel.allCiclos.isEmpty || viewModel.allCiclos.allSatisfy({ $0.backendId == nil }) {
+//
+                    
+                    EmptyCicloView {
+                        addNewCicloSheet.toggle()
+                    }
+                    
+                    Spacer()
+                } else {
+                    CardMainView()
+                    
+                    
+                    CicloGastosView() {
+                        addNewGastoSheet.toggle()
+                    } deleteAction: { diaId, gastoID in
+                        Task { try await viewModel.deleteGasto(gastoID: gastoID) }
+                    }
+                    .id(viewModel.actualCiclo.id)
+                    .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
                 }
-                .id(viewModel.actualCiclo.id)
-                .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
+                
+                Spacer()
             }
             .task {
                 await viewModel.fetchAllCiclos1()
             }
             .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden)
             .background(.backgroundCor)
             .overlay(alignment: .topTrailing) {
                 if showMenu {
@@ -91,7 +107,12 @@ struct CiclosListView: View {
                         .offset(x: -16, y: 70)
                 }
             }
+            .fullScreenCover(isPresented: $addNewCicloSheet) {
+                NewCicloView()
+                    .environmentObject(newCicloViewModel)
+            }
         }
+            
     }
 }
 
@@ -138,36 +159,30 @@ final class CiclosListViewModel: ObservableObject {
         do {
             let ciclos = try await NetworkManager.shared.fetchAllCiclos(user: user)
             
-            if ciclos.isEmpty {
-                self.allCiclos = CicloSoftex.examples
-            } else {
-                self.allCiclos = ciclos
-            }
+            self.allCiclos = ciclos
             
-            self.index = self.allCiclos.count - 1
+            self.index = max(self.allCiclos.count - 1, 0)
             
-            if self.index >= 0 {
+            if !self.allCiclos.isEmpty {
                 let cicloParaSalvar = self.allCiclos[self.index]
                 self.actualCiclo = cicloParaSalvar
-                
                 self.salvarNoCache(ciclo: cicloParaSalvar)
+            } else {
+                self.actualCiclo = CicloSoftex(valor_total: 0, gasto_total: 0, periodo: "", diaria: 0, titulo: "", dias: [])
+                UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
             }
             
-            if self.index >= 0 {
-                self.actualCiclo = self.allCiclos[self.index]
-            }
-            
-            if self.actualCiclo.backendId != nil || ciclos.isEmpty {
-                self.isLoading = false
-            }
+            self.isLoading = false
             
             self.hasLoadedOnce = true
             
         } catch {
             print("Erro ao buscar ciclos:", error)
             
-            self.allCiclos = CicloSoftex.examples
-            self.actualCiclo = self.allCiclos[0]
+            self.allCiclos = []
+            self.actualCiclo = CicloSoftex(valor_total: 0, gasto_total: 0, periodo: "", diaria: 0, titulo: "", dias: [])
+            UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
+            self.isLoading = false
             self.hasLoadedOnce = true
         }
     }

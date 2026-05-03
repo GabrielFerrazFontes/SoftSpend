@@ -17,62 +17,75 @@ struct HistoricoView: View {
     
     var body: some View {
         NavigationStack{
-            ScrollView{
-                VStack{
-                    VStack(alignment: .leading){
-                        Text("Histórico")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
-                        Text("Todos os seu ciclos registrados")
-                            .foregroundStyle(Color("textSecondary"))
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                        ForEach(viewModel.allCiclos){ ciclo in
-                            CardCiclosView(ciclo: ciclo)
-                                .environmentObject(viewModel)
-                                .id("\(ciclo.id)-\(viewModel.actualCiclo.id)")
-                        }
-                    }
-                    
-                    Button{
-                        showingModal.toggle()
-                    }label: {
-                        HStack(alignment: .center, spacing: 12) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 18))
-                                .foregroundStyle(Color("textPrimary"))
-                                .frame(width: 40, height: 40)
-                                .background(Color("cinza"))
-                                .cornerRadius(16)
+            VStack(alignment: .leading){
+                
+                
+                Text("Histórico")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                Text("Todos os seu ciclos registrados")
+                    .foregroundStyle(Color("textSecondary"))
+                    .padding(.bottom)
+                if(!viewModel.allCiclos.isEmpty || !viewModel.allCiclos.allSatisfy({ $0.backendId == nil })) {
+                    ScrollView{
+                        VStack(alignment: .leading){
                             
-                            Text("Criar Novo Ciclo")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundStyle(Color("textSecondary"))
+                            ForEach(viewModel.allCiclos){ ciclo in
+                                CardCiclosView(ciclo: ciclo)
+                                    .environmentObject(viewModel)
+                                    .id("\(ciclo.id)-\(viewModel.actualCiclo.id)")
+                            }
+                            
+                            
+                            Button{
+                                showingModal.toggle()
+                            }label: {
+                                HStack(alignment: .center, spacing: 12) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(Color("textPrimary"))
+                                        .frame(width: 40, height: 40)
+                                        .background(Color("cinza"))
+                                        .cornerRadius(16)
+                                    
+                                    Text("Criar Novo Ciclo")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundStyle(Color("textSecondary"))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 100)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .strokeBorder(
+                                            Color.gray.opacity(0.4),
+                                            style: StrokeStyle(lineWidth: 2, dash: [3])
+                                        )
+                                        .background(Color("cardBackground"))
+                                        .cornerRadius(18)
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 10)
+                            }
+                            
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 100)
-                        .background {
-                            RoundedRectangle(cornerRadius: 18)
-                                .strokeBorder(
-                                    Color.gray.opacity(0.4),
-                                    style: StrokeStyle(lineWidth: 2, dash: [3])
-                                )
-                                .background(Color("cardBackground"))
-                                .cornerRadius(18)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                    }
-                    .fullScreenCover(isPresented: $showingModal) {
-                        NewCicloView()
-                            .environmentObject(newCicloViewModel)
+                        .padding(.top, 20)
+                        
                     }
                 }
-                
+                else{
+                    Spacer()
+                    EmptyHistoricoView{
+                        showingModal.toggle()
+                    }
+                    Spacer()
+                }
             }
         }
-        .padding(.top, 20)
+        .fullScreenCover(isPresented: $showingModal) {
+            NewCicloView()
+                .environmentObject(newCicloViewModel)
+        }
+        
         .onAppear(){
             Task{
                 await viewModel.fetchAllCiclos1()
