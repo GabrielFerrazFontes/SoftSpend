@@ -19,13 +19,17 @@ struct HistoricoView: View {
         NavigationStack{
             VStack(alignment: .leading){
                 
+                VStack(alignment: .leading){
+                    Text("Histórico")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    
+                    Text("Todos os seu ciclos registrados")
+                        .foregroundStyle(Color("textSecondary"))
+                        .padding(.bottom)
+                }
+                .padding()
                 
-                Text("Histórico")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Text("Todos os seu ciclos registrados")
-                    .foregroundStyle(Color("textSecondary"))
-                    .padding(.bottom)
                 if(!viewModel.allCiclos.isEmpty || !viewModel.allCiclos.allSatisfy({ $0.backendId == nil })) {
                     ScrollView{
                         VStack(alignment: .leading){
@@ -80,6 +84,7 @@ struct HistoricoView: View {
                     Spacer()
                 }
             }
+            
         }
         .fullScreenCover(isPresented: $showingModal) {
             NewCicloView()
