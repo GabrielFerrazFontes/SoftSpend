@@ -72,9 +72,17 @@ struct CiclosListView: View {
 
                 }.padding()
                 
-                if viewModel.allCiclos.isEmpty || viewModel.allCiclos.allSatisfy({ $0.backendId == nil }) {
-//
+                if viewModel.isLoading {
+                    CardMainView()
                     
+                    CicloGastosView() {
+                        addNewGastoSheet.toggle()
+                    } deleteAction: { diaId, gastoID in
+                        Task { try await viewModel.deleteGasto(gastoID: gastoID) }
+                    }
+                    .id(viewModel.actualCiclo.id)
+                    .environmentObject(CicloGastosViewModel(ciclo: viewModel.actualCiclo))
+                } else if viewModel.allCiclos.isEmpty || viewModel.allCiclos.allSatisfy({ $0.backendId == nil }) {
                     EmptyCicloView {
                         addNewCicloSheet.toggle()
                     }
@@ -82,7 +90,6 @@ struct CiclosListView: View {
                     Spacer()
                 } else {
                     CardMainView()
-                    
                     
                     CicloGastosView() {
                         addNewGastoSheet.toggle()

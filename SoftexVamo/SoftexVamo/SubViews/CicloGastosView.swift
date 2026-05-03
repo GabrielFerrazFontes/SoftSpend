@@ -47,19 +47,48 @@ struct CicloGastosView: View {
                     }
                     
                     
-                    Image(systemName: "line.3.horizontal.decrease")
-                        .padding(.vertical, 16)
-                        .padding(.horizontal, 12)
-                        .background(Color("cinza"))
-                        .cornerRadius(15)
-                        .shadow(
-                            color: Color.black.opacity(0.1),
-                            radius: 10,
-                        )
-                        .overlay{
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(.gray, lineWidth: 0.2)
+                    Menu {
+                        Button {
+                            viewModel.categoriaFiltro = nil
+                        } label: {
+                            HStack {
+                                Text("Todas as categorias")
+                                if viewModel.categoriaFiltro == nil {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
                         }
+                        
+                        Divider()
+                        
+                        ForEach(Categoria.allCases) { categoria in
+                            Button {
+                                viewModel.categoriaFiltro = categoria
+                            } label: {
+                                HStack {
+                                    Image(systemName: categoria.systemImageName)
+                                    Text(categoria.localizedName)
+                                    if viewModel.categoriaFiltro == categoria {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        ZStack {
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .foregroundStyle(viewModel.categoriaFiltro != nil ? Color.white : Color("textPrimary"))
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 12)
+                                .background(viewModel.categoriaFiltro != nil ? Color("roxoInicial") : Color("cinza"))
+                                .cornerRadius(15)
+                                .shadow(color: Color.black.opacity(0.1), radius: 10)
+                                .overlay{
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(.gray, lineWidth: 0.2)
+                                }
+                        }
+                    }
                 }
                 ForEach(viewModel.secoesExibidas) { dia in
                     if(dia.gastos.count != 0){
@@ -200,6 +229,7 @@ final class CicloGastosViewModel: ObservableObject {
     
     @Published var ciclo: CicloSoftex
     @Published var searchGastoText: String = ""
+    @Published var categoriaFiltro: Categoria? = nil
 
     init(ciclo: CicloSoftex) {
         self.ciclo = ciclo
@@ -212,11 +242,13 @@ final class CicloGastosViewModel: ObservableObject {
     }
     
     var secoesExibidas: [DiaSoftex] {
-        if searchGastoText.isEmpty { return ciclo.dias }
+        if searchGastoText.isEmpty && categoriaFiltro == nil { return ciclo.dias }
         
         return ciclo.dias.compactMap { dia in
-            let gastosQueBatem = dia.gastos.filter {
-                $0.titulo.localizedCaseInsensitiveContains(searchGastoText)
+            let gastosQueBatem = dia.gastos.filter { gasto in
+                let matchesTexto = searchGastoText.isEmpty || gasto.titulo.localizedCaseInsensitiveContains(searchGastoText)
+                let matchesCategoria = categoriaFiltro == nil || gasto.categoria == categoriaFiltro
+                return matchesTexto && matchesCategoria
             }
             
             if gastosQueBatem.isEmpty { return nil }
@@ -229,8 +261,10 @@ final class CicloGastosViewModel: ObservableObject {
     
     func deleteGasto(dia: DiaSoftex, offsets: IndexSet) -> Int {
         
-        let gastosExibidos = dia.gastos.filter {
-            $0.titulo.localizedCaseInsensitiveContains(searchGastoText)
+        let gastosExibidos = dia.gastos.filter { gasto in
+            let matchesTexto = searchGastoText.isEmpty || gasto.titulo.localizedCaseInsensitiveContains(searchGastoText)
+            let matchesCategoria = categoriaFiltro == nil || gasto.categoria == categoriaFiltro
+            return matchesTexto && matchesCategoria
         }
         
         guard let firstOffset = offsets.first,

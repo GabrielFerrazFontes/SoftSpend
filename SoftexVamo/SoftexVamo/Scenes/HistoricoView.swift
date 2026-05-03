@@ -30,7 +30,7 @@ struct HistoricoView: View {
                 }
                 .padding()
                 
-                if(!viewModel.allCiclos.isEmpty || !viewModel.allCiclos.allSatisfy({ $0.backendId == nil })) {
+                if(viewModel.allCiclos.isEmpty || !viewModel.allCiclos.allSatisfy({ $0.backendId == nil })) {
                     ScrollView{
                         VStack(alignment: .leading){
                             
@@ -72,7 +72,7 @@ struct HistoricoView: View {
                             }
                             
                         }
-                        .padding(.top, 20)
+//                        .padding(.top, 20)
                         
                     }
                 }

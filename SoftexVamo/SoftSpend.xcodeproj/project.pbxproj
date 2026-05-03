@@ -20,18 +20,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		281085862F74615600C131AB /* SoftexVamo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoftexVamo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		281085862F74615600C131AB /* SoftSpend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoftSpend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2834257B2F857EFB00710FB7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2834257D2F857EFC00710FB7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftexVamo" target */ = {
+		F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftSpend" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 281085852F74615600C131AB /* SoftexVamo */;
+			target = 281085852F74615600C131AB /* SoftSpend */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -39,7 +39,7 @@
 		281085882F74615600C131AB /* SoftexVamo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftexVamo" target */,
+				F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftSpend" target */,
 			);
 			path = SoftexVamo;
 			sourceTree = "<group>";
@@ -75,7 +75,7 @@
 		281085872F74615600C131AB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				281085862F74615600C131AB /* SoftexVamo.app */,
+				281085862F74615600C131AB /* SoftSpend.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -92,9 +92,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		281085852F74615600C131AB /* SoftexVamo */ = {
+		281085852F74615600C131AB /* SoftSpend */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 281085932F74615900C131AB /* Build configuration list for PBXNativeTarget "SoftexVamo" */;
+			buildConfigurationList = 281085932F74615900C131AB /* Build configuration list for PBXNativeTarget "SoftSpend" */;
 			buildPhases = (
 				281085822F74615600C131AB /* Sources */,
 				281085832F74615600C131AB /* Frameworks */,
@@ -108,11 +108,11 @@
 			fileSystemSynchronizedGroups = (
 				281085882F74615600C131AB /* SoftexVamo */,
 			);
-			name = SoftexVamo;
+			name = SoftSpend;
 			packageProductDependencies = (
 			);
 			productName = SoftexVamo;
-			productReference = 281085862F74615600C131AB /* SoftexVamo.app */;
+			productReference = 281085862F74615600C131AB /* SoftSpend.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -130,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 281085812F74615600C131AB /* Build configuration list for PBXProject "SoftexVamo" */;
+			buildConfigurationList = 281085812F74615600C131AB /* Build configuration list for PBXProject "SoftSpend" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -144,7 +144,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				281085852F74615600C131AB /* SoftexVamo */,
+				281085852F74615600C131AB /* SoftSpend */,
 			);
 		};
 /* End PBXProject section */
@@ -362,7 +362,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		281085812F74615600C131AB /* Build configuration list for PBXProject "SoftexVamo" */ = {
+		281085812F74615600C131AB /* Build configuration list for PBXProject "SoftSpend" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				281085912F74615900C131AB /* Debug */,
@@ -371,7 +371,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		281085932F74615900C131AB /* Build configuration list for PBXNativeTarget "SoftexVamo" */ = {
+		281085932F74615900C131AB /* Build configuration list for PBXNativeTarget "SoftSpend" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				281085942F74615900C131AB /* Debug */,
