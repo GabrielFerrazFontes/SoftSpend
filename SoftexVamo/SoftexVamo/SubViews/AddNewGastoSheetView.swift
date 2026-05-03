@@ -41,15 +41,18 @@ struct AddNewGastoSheetView: View {
     let grayBorder = Color.gray.opacity(0.2)
     
     @FocusState private var focusedField: Field?
+    @State private var hasScrolled: Bool = false
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20){
-                
-                Text("Novo Gasto")
-                    .font(.system(size: 34, weight: .bold))
-                
-                VStack {
+        ZStack(alignment: .top) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20){
+                    Color.clear.frame(height: 50)
+                    
+                    Text("Novo Gasto")
+                        .font(.system(size: 34, weight: .bold))
+                    
+                    VStack {
                     Text("VALOR DA DESPESA")
                         .font(.system(size: 14, weight: .bold))
                     
@@ -137,27 +140,40 @@ struct AddNewGastoSheetView: View {
                 }
                 .padding(.top, 10)
             }
-            .padding(.horizontal, 25)
-            .padding(.bottom, 50)
-        }
-        .safeAreaInset(edge: .top) {
-            VStack(spacing: 0) {
-                HStack {
-                    Button(action: { dismiss() }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                            Text("Voltar")
-                        }
-                        .foregroundColor(.purple)
-                        .font(.system(size: 18, weight: .medium))
-                    }
-                    Spacer()
-                }
                 .padding(.horizontal, 25)
-                .padding(.vertical, 12)
-                .background(Color("cinza"))
+                .padding(.bottom, 50)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear
+                            .preference(key: ScrollOffsetKey.self, value: geo.frame(in: .named("gastoScroll")).minY)
+                    }
+                )
             }
-            .background(Color("cardBackground"))
+            .coordinateSpace(name: "gastoScroll")
+            .onPreferenceChange(ScrollOffsetKey.self) { value in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    hasScrolled = value < -5
+                }
+            }
+            
+            HStack {
+                Button(action: { dismiss() }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Voltar")
+                    }
+                    .foregroundColor(.purple)
+                    .font(.system(size: 18, weight: .medium))
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 25)
+            .padding(.vertical, 12)
+            .background {
+                Rectangle()
+                    .fill(hasScrolled ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(Color("surfaceBackground")))
+                    .ignoresSafeArea(edges: .top)
+            }
         }
         .background(Color("surfaceBackground"))
         .onTapGesture { focusedField = nil }
