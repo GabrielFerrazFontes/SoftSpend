@@ -19,10 +19,14 @@ struct SoftexVamoApp: App {
                 if authService.isAuthenticated {
                     MainView()
                         .environmentObject(listViewModel)
+                        .id(authService.currentUser?.id ?? 0)
                 } else {
                     LoginView()
                         .environmentObject(authService)
                 }
+            }
+            .onChange(of: authService.currentUser?.id) { _, _ in
+                listViewModel.reset()
             }
         }
     }

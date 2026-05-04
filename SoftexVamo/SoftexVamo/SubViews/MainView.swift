@@ -12,8 +12,13 @@ struct MainView: View {
     @EnvironmentObject var viewModel: CiclosListViewModel
     let newCicloViewModel = NewCicloViewModel()
     @State var sheetview = false
+    @State private var isExpanded = true
 
     let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
+    
+    var canAddGasto: Bool {
+        viewModel.actualCiclo.backendId != nil
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -41,22 +46,44 @@ struct MainView: View {
                 .frame(maxWidth: .infinity)
                 
                 Button(action: {
-                    sheetview.toggle()
+                    if canAddGasto {
+                        sheetview.toggle()
+                    }
                 }) {
-                    ZStack {
-                        Circle()
-                            .fill(primaryPurple)
-                            .frame(width: 64, height: 64)
-                            .shadow(color: primaryPurple.opacity(0.4), radius: 10, x: 0, y: 5)
+                    HStack(spacing: 8) {
                         Image(systemName: "plus.circle")
                             .font(.system(size: 30, weight: .light))
                             .foregroundColor(.white)
+                        if isExpanded {
+                            Text("Adicionar gasto")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .transition(.opacity)
+                        }
                     }
-                }.fullScreenCover(isPresented: $sheetview){
+                    .padding(.horizontal, isExpanded ? 20 : 17)
+                    .frame(height: 64)
+                    .fixedSize()
+                    .background(
+                        Capsule()
+                            .fill(canAddGasto ? primaryPurple : Color.gray.opacity(0.5))
+                            .shadow(color: (canAddGasto ? primaryPurple : Color.gray).opacity(0.4), radius: 10, x: 0, y: 5)
+                    )
+                }
+                .zIndex(1)
+                .disabled(!canAddGasto)
+                .fullScreenCover(isPresented: $sheetview){
                     AddNewGastoSheetView(dias: viewModel.actualCiclo.dias)
                         .environmentObject(viewModel)
                 }
                 .offset(y: -24)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                            isExpanded = false
+                        }
+                    }
+                }
 
                 
                 

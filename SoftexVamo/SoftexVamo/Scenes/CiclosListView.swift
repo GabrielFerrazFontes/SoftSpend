@@ -144,6 +144,16 @@ final class CiclosListViewModel: ObservableObject {
     }
     
     @MainActor
+    func reset() {
+        self.allCiclos = []
+        self.actualCiclo = CicloSoftex(valor_total: 0, gasto_total: 0, periodo: "", diaria: 0, titulo: "", dias: [])
+        self.index = 0
+        self.isLoading = true
+        self.hasLoadedOnce = false
+        UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
+    }
+    
+    @MainActor
     func fetchAllCiclos1() async {
         
         guard let user = currentUser else {
