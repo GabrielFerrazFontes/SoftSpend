@@ -4,7 +4,8 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 pydantic[email]
-passlib[bcrypt]
+passlib[argon2]
+argon2-cffi
 python-jose[cryptography]
 alembic
 pymysql

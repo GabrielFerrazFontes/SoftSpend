@@ -18,7 +18,7 @@ final class AuthService: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let baseURL = "https://henley-schedular-sufferably.ngrok-free.dev"
+    private let baseURL = "https://softspend-production.up.railway.app"
     private let tokenKey = "auth_token"
     private let userKey = "user_data"
     

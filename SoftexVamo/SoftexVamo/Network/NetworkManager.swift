@@ -15,7 +15,7 @@ final class NetworkManager {
     
     func fetchAllCiclos(user: UserModel) async throws -> [CicloSoftex] {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/usuario/ciclos/\(user.id)") else { return [] }
+        guard let url = URL(string: "https://softspend-production.up.railway.app/usuario/ciclos/\(user.id)") else { return [] }
         
         let session = URLSession(
             configuration: .default,
@@ -33,7 +33,7 @@ final class NetworkManager {
     
     func postCiclo(newCiclo: CicloSoftex) async throws -> CicloSoftex {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/ciclos") else { throw URLError(.badURL)}
+        guard let url = URL(string: "https://softspend-production.up.railway.app/ciclos") else { throw URLError(.badURL)}
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -70,7 +70,7 @@ final class NetworkManager {
     
     func postGasto(newGasto: GastosDia, diaId: Int) async throws -> GastosDia {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/dias/\(diaId)/gastos") else { throw URLError(.badURL) }
+        guard let url = URL(string: "https://softspend-production.up.railway.app/dias/\(diaId)/gastos") else { throw URLError(.badURL) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -107,7 +107,7 @@ final class NetworkManager {
     
     func deleteGasto(gastoId: Int) async throws {
         
-        guard let url = URL(string: "https://henley-schedular-sufferably.ngrok-free.dev/gastos/\(gastoId)") else { return }
+        guard let url = URL(string: "https://softspend-production.up.railway.app/gastos/\(gastoId)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
