@@ -32,7 +32,9 @@ struct AddNewGastoSheetView: View {
     
     init(dias: [DiaSoftex]) {
         self.dias = dias
-        _selectedDia = State(initialValue: dias.first ?? DiaSoftex.examples[0])
+        let hoje = dias.first(where: { Calendar.current.isDateInToday($0.data) })
+        let inicial = hoje ?? dias.first ?? DiaSoftex.examples[0]
+        _selectedDia = State(initialValue: inicial)
     }
     
     let purplePrimary = Color(red: 147/255, green: 51/255, blue: 234/255)
@@ -65,6 +67,11 @@ struct AddNewGastoSheetView: View {
                         TextField("0,00", text: $valueString)
                             .multilineTextAlignment(.center)
                             .font(.system(size: 30, weight: .bold))
+                            .keyboardType(.decimalPad)
+                            .focused($focusedField, equals: .value)
+                            .onChange(of: valueString) { _, newValue in
+                                value = verificarNumeros(orcamento: newValue)
+                            }
                     }
                 }
                 

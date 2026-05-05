@@ -13,10 +13,10 @@ struct CiclosListView: View {
     @StateObject var authService = AuthService.shared
     @State private var showMenu = false
     let newCicloViewModel = NewCicloViewModel()
-//    @StateObject var user = AuthService.shared.currentUser!
+    //    @StateObject var user = AuthService.shared.currentUser!
     
     private var currentUser: UserModel? {
-            AuthService.shared.currentUser
+        AuthService.shared.currentUser
     }
     
     let corFundoTela = LinearGradient(
@@ -69,7 +69,7 @@ struct CiclosListView: View {
                             
                         }
                     }
-
+                    
                 }.padding()
                 
                 if viewModel.isLoading {
@@ -119,7 +119,7 @@ struct CiclosListView: View {
                     .environmentObject(newCicloViewModel)
             }
         }
-            
+        
     }
 }
 
@@ -132,7 +132,7 @@ final class CiclosListViewModel: ObservableObject {
     @Published var selectedTab: Int = 0
     
     private var currentUser: UserModel? {
-            AuthService.shared.currentUser
+        AuthService.shared.currentUser
     }
     
     
@@ -157,8 +157,8 @@ final class CiclosListViewModel: ObservableObject {
     func fetchAllCiclos1() async {
         
         guard let user = currentUser else {
-                    print("Erro: Usuário não está logado")
-                    return
+            print("Erro: Usuário não está logado")
+            return
         }
         
         if hasLoadedOnce { return }
@@ -211,12 +211,12 @@ final class CiclosListViewModel: ObservableObject {
         let periodo = createPeriodoString(from: startDate, to: endDate)
         
         guard let user = currentUser else {
-                    print("Erro: Usuário não está logado")
-                    return
-                }
+            print("Erro: Usuário não está logado")
+            return
+        }
         
         let newCiclo = CicloSoftex(valor_total: totalValue, gasto_total: 0, periodo: periodo, diaria: saldo, titulo: titulo, dias: days, id_usuario: user.id)
- 
+        
         await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
     }
     
@@ -261,11 +261,11 @@ final class CiclosListViewModel: ObservableObject {
             let novoCiclo = try await NetworkManager.shared.postCiclo(newCiclo: newCiclo )
             
             DispatchQueue.main.async {
-                        self.allCiclos.append(novoCiclo)
-                        self.actualCiclo = novoCiclo
-                        self.index = self.allCiclos.count - 1
-                    }
-
+                self.allCiclos.append(novoCiclo)
+                self.actualCiclo = novoCiclo
+                self.index = self.allCiclos.count - 1
+            }
+            
         } catch {
             print("Erro ao criar o ciclo:", error)
         }
@@ -294,6 +294,23 @@ final class CiclosListViewModel: ObservableObject {
     }
     
     func deleteGasto(gastoID: Int) async throws{
+        var valorRemovido: Float = 0
+        
+        for diaIndex in actualCiclo.dias.indices {
+            if let gastoIndex = actualCiclo.dias[diaIndex].gastos.firstIndex(where: { $0.backendId == gastoID }) {
+                valorRemovido = actualCiclo.dias[diaIndex].gastos[gastoIndex].valor
+                await MainActor.run {
+                    self.actualCiclo.dias[diaIndex].gastos.remove(at: gastoIndex)
+                    self.actualCiclo.gasto_total -= valorRemovido
+                    
+                    if self.index < self.allCiclos.count {
+                        self.allCiclos[self.index] = self.actualCiclo
+                    }
+                }
+                break
+            }
+        }
+        
         do{
             try await NetworkManager.shared.deleteGasto(gastoId: gastoID)
         }catch{

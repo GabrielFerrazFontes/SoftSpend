@@ -22,7 +22,7 @@ struct CicloGastosView: View {
     }
     
     var body: some View {
-        ScrollView{
+        ScrollView(showsIndicators: false){
             VStack(alignment: .leading) {
                 
                 Text("Gastos Registrados")
@@ -130,6 +130,7 @@ struct CicloGastosView: View {
                 
             }
             .padding()
+            .padding(.bottom, 80)
         }
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
