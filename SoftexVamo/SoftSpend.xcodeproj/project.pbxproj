@@ -29,6 +29,8 @@
 		F92A31972F76D7D30061B042 /* Exceptions for "SoftexVamo" folder in "SoftSpend" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Config.example.xcconfig,
+				Config.xcconfig,
 				Info.plist,
 			);
 			target = 281085852F74615600C131AB /* SoftSpend */;
@@ -172,6 +174,8 @@
 /* Begin XCBuildConfiguration section */
 		281085912F74615900C131AB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 281085882F74615600C131AB /* SoftexVamo */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -237,6 +241,8 @@
 		};
 		281085922F74615900C131AB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 281085882F74615600C131AB /* SoftexVamo */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

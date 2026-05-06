@@ -9,3 +9,6 @@ argon2-cffi
 python-jose[cryptography]
 alembic
 pymysql
+google-genai
+python-multipart
+Pillow

@@ -18,7 +18,7 @@ final class AuthService: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let baseURL = "https://softspend-production.up.railway.app"
+    private var baseURL: String { APIConfig.shared.baseURL }
     private let tokenKey = "auth_token"
     private let userKey = "user_data"
     

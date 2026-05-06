@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuView: View {
     @Binding var showMenu: Bool
     @StateObject var authService = AuthService.shared
+    @State private var selectedEnv: APIEnvironment = APIConfig.shared.current
     
     var body: some View {
         VStack(spacing: 0) {
@@ -43,6 +44,41 @@ struct MenuView: View {
                 .background(Color("roxoInicial"))
             }
 
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 15) {
+                    Image(systemName: "network")
+                        .foregroundColor(Color("roxoInicial"))
+                        .padding(10)
+                        .background(Color("roxoInicial").opacity(0.1))
+                        .clipShape(Circle())
+                    
+                    VStack(alignment: .leading) {
+                        Text("Ambiente API")
+                            .font(.system(size: 16, weight: .bold))
+                        Text(selectedEnv.baseURL)
+                            .font(.system(size: 10))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                    Spacer()
+                }
+                
+                Picker("Ambiente", selection: $selectedEnv) {
+                    ForEach(APIEnvironment.allCases, id: \.self) { env in
+                        Text(env.displayName).tag(env)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: selectedEnv) { _, newValue in
+                    APIConfig.shared.current = newValue
+                }
+            }
+            .padding()
+            .background(Color("cardBackground"))
+            
+            Divider()
+            
             Button {
                 withAnimation {
                     showMenu = false

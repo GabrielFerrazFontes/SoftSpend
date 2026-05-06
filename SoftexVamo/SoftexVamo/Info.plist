@@ -2,9 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>API_BASE_URL_LOCAL</key>
+	<string>$(API_BASE_URL_LOCAL)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Precisamos acessar suas fotos para escanear comprovantes</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Precisamos da câmera para escanear comprovantes</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Precisamos acessar a rede local para conectar ao servidor de desenvolvimento</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 </dict>

@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from dtos.gasto import GastoResponse, GastoRequest
-from services import gasto_service
+from dtos.gasto import GastoResponse, GastoRequest, GastoExtraidoResponse
+from services import gasto_service, ocr_service
 
 router = APIRouter()
 
@@ -13,3 +13,21 @@ def criar_gasto(dia_id: int, gasto: GastoRequest, db: Session = Depends(get_db))
 @router.delete("/gastos/{gasto_id}", status_code = 204)
 def deletar_gasto(gasto_id: int, db: Session = Depends(get_db)):
     return gasto_service.remover_gasto(db, gasto_id)
+
+@router.post("/gastos/extrair", response_model=GastoExtraidoResponse)
+async def extrair_gasto_de_imagem(imagem: UploadFile = File(...)):
+    if not imagem.content_type or not imagem.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
+    
+    conteudo = await imagem.read()
+    
+    if len(conteudo) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Imagem muito grande (max 10MB)")
+    
+    try:
+        dados = ocr_service.extrair_gasto_da_imagem(conteudo)
+        return dados
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao processar imagem: {e}")

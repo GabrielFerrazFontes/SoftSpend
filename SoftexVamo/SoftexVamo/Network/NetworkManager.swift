@@ -15,7 +15,7 @@ final class NetworkManager {
     
     func fetchAllCiclos(user: UserModel) async throws -> [CicloSoftex] {
         
-        guard let url = URL(string: "https://softspend-production.up.railway.app/usuario/ciclos/\(user.id)") else { return [] }
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/usuario/ciclos/\(user.id)") else { return [] }
         
         let session = URLSession(
             configuration: .default,
@@ -33,7 +33,7 @@ final class NetworkManager {
     
     func postCiclo(newCiclo: CicloSoftex) async throws -> CicloSoftex {
         
-        guard let url = URL(string: "https://softspend-production.up.railway.app/ciclos") else { throw URLError(.badURL)}
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/ciclos") else { throw URLError(.badURL)}
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -70,7 +70,7 @@ final class NetworkManager {
     
     func postGasto(newGasto: GastosDia, diaId: Int) async throws -> GastosDia {
         
-        guard let url = URL(string: "https://softspend-production.up.railway.app/dias/\(diaId)/gastos") else { throw URLError(.badURL) }
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/dias/\(diaId)/gastos") else { throw URLError(.badURL) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -105,9 +105,48 @@ final class NetworkManager {
         
     }
     
+    func extrairGastoDeImagem(imageData: Data) async throws -> GastoExtraidoResponse {
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/gastos/extrair") else {
+            throw URLError(.badURL)
+        }
+        
+        let boundary = "Boundary-\(UUID().uuidString)"
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 60
+        
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"imagem\"; filename=\"comprovante.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        let session = URLSession(
+            configuration: .default,
+            delegate: InsecureSessionDelegate(),
+            delegateQueue: nil
+        )
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              200...299 ~= httpResponse.statusCode else {
+            let mensagem = String(data: data, encoding: .utf8) ?? "Erro desconhecido"
+            print("Erro extrair gasto:", mensagem)
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(GastoExtraidoResponse.self, from: data)
+    }
+    
     func deleteGasto(gastoId: Int) async throws {
         
-        guard let url = URL(string: "https://softspend-production.up.railway.app/gastos/\(gastoId)") else { return }
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/gastos/\(gastoId)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
