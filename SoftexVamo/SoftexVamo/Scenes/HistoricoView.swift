@@ -24,7 +24,7 @@ struct HistoricoView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     
-                    Text("Todos os seu ciclos registrados")
+                    Text("Todos os seus ciclos registrados")
                         .foregroundStyle(Color("textSecondary"))
                         .padding(.bottom)
                 }
