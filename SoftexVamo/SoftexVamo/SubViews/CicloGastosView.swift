@@ -90,7 +90,7 @@ struct CicloGastosView: View {
                         }
                     }
                 }
-                ForEach(viewModel.secoesExibidas) { dia in
+                ForEach(viewModel.secoesExibidas.reversed()) { dia in
                     if(dia.gastos.count != 0){
                         Section(header: createSectionHeader(dia: dia)) {
                             ZStack{
