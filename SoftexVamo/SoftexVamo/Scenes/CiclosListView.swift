@@ -273,18 +273,6 @@ final class CiclosListViewModel: ObservableObject {
         await postToNetwork(newCiclo: newCiclo, daysCount: dayCount)
     }
     
-    func nextCiclo() {
-        guard index <= allCiclos.count - 2 else { return }
-        index += 1
-        actualCiclo = allCiclos[index]
-    }
-    
-    func previousCiclo() {
-        guard index > 0 else { return }
-        index -= 1
-        actualCiclo = allCiclos[index]
-    }
-    
     private func salvarNoCache(ciclo: CicloSoftex) {
         if ciclo.backendId != nil {
             if let encoded = try? JSONEncoder().encode(ciclo) {

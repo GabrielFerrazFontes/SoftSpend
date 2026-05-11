@@ -21,10 +21,14 @@ struct CardCiclosView: View {
         return CGFloat(min(max(percent, 0), 1))
     }
     
+    private var isAtual: Bool {
+        viewModel.actualCiclo.backendId == ciclo.backendId
+    }
+    
     var body: some View {
             ZStack{
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(viewModel.actualCiclo.id == ciclo.id ?
+                    .fill(isAtual ?
                           AnyShapeStyle(corFundoTela) :
                             AnyShapeStyle(Color("cardBackground")))
                     .id(viewModel.actualCiclo.id)
@@ -36,30 +40,30 @@ struct CardCiclosView: View {
                         ZStack {
                             Image(systemName: "mappin.and.ellipse")
                                 .font(.system(size: 18, weight: .medium))
-                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? .white : Color.appPurple)
+                                .foregroundStyle(isAtual ? .white : Color.appPurple)
                         }
                         .frame(width: 40, height: 40)
-                        .background(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.15) : Color.appPurple.opacity(0.15))
+                        .background(isAtual ? Color.white.opacity(0.15) : Color.appPurple.opacity(0.15))
                         .cornerRadius(14)
                         .padding(.trailing, 10)
                         VStack(alignment: .leading){
                             Text(ciclo.titulo)
                                 .font(.system(size: 20, weight: .bold))
                             Text(ciclo.periodo)
-                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
+                                .foregroundStyle(isAtual ? Color.white.opacity(0.75) : Color("textSecondary"))
                                 .font(.system(size: 12, weight: .bold))
                         }
                         
                         Spacer()
                         
                         Image(systemName: "chevron.right")
-                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
+                            .foregroundStyle(isAtual ? Color.white.opacity(0.75) : Color("textSecondary"))
                             .font(.system(size: 14))
                     }
                     
                     HStack{
                         Text("Total Gasto")
-                            .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.75) : Color("textSecondary"))
+                            .foregroundStyle(isAtual ? Color.white.opacity(0.75) : Color("textSecondary"))
                             .font(.system(size: 14, weight: .bold))
                         Spacer()
                         Text("\(ciclo.gasto_total, format: .currency(code: "BRL").locale(Locale(identifier: "pt_BR")))")
@@ -70,11 +74,11 @@ struct CardCiclosView: View {
                     GeometryReader { geometry in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(viewModel.actualCiclo.titulo == ciclo.titulo ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
+                                .fill(isAtual ? Color.white.opacity(0.1) : Color.black.opacity(0.05))
                                 .frame(height: 10)
                             
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(viewModel.actualCiclo.id == ciclo.id ?
+                                .fill(isAtual ?
                                       AnyShapeStyle(Color(red: 0.4, green: 0.9, blue: 0.5)) : AnyShapeStyle(Color.appPurple))
                                 .frame(width: geometry.size.width * progresso, height: 10)
                                 .animation(.spring(), value: ciclo.gasto_total)
@@ -96,7 +100,7 @@ struct CardCiclosView: View {
                 viewModel.selectedTab = 0
             }
         //
-        .foregroundColor(viewModel.actualCiclo.id == ciclo.id ? .white : Color("textPrimary"))
+        .foregroundColor(isAtual ? .white : Color("textPrimary"))
         .padding(.bottom, 10)
         //        .ignoresSafeArea()
         
