@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, selectinload
 import models
 
 
@@ -20,10 +20,12 @@ def get_ciclo(db: Session, ciclo_id: int):
 
 
 def get_all_ciclos(db: Session, user_id: int):
-    return db.query(models.Ciclo)\
+    return (
+        db.query(models.Ciclo)
         .options(
-            joinedload(models.Ciclo.dias)
-            .joinedload(models.Dia.gastos)
-        )\
-        .filter(models.Ciclo.id_usuario == user_id)\
+            selectinload(models.Ciclo.dias)
+            .selectinload(models.Dia.gastos)
+        )
+        .filter(models.Ciclo.id_usuario == user_id)
         .all()
+    )

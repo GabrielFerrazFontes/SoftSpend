@@ -80,7 +80,7 @@ struct CicloGastosView: View {
                                 .foregroundStyle(viewModel.categoriaFiltro != nil ? Color.white : Color("textPrimary"))
                                 .padding(.vertical, 16)
                                 .padding(.horizontal, 12)
-                                .background(viewModel.categoriaFiltro != nil ? Color("roxoInicial") : Color("cinza"))
+                                .background(viewModel.categoriaFiltro != nil ? Color.appPurple : Color("cinza"))
                                 .cornerRadius(15)
                                 .shadow(color: Color.black.opacity(0.1), radius: 10)
                                 .overlay{

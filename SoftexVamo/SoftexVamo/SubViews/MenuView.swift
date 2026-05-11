@@ -9,12 +9,14 @@ import SwiftUI
 
 struct MenuView: View {
     @Binding var showMenu: Bool
+    @EnvironmentObject var viewModel: CiclosListViewModel
     @StateObject var authService = AuthService.shared
     @State private var selectedEnv: APIEnvironment = APIConfig.shared.current
     
     var body: some View {
         VStack(spacing: 0) {
-            NavigationLink(destination: Text("Tela de Perfil")) {
+            NavigationLink(destination: PerfilView()
+                                            .environmentObject(viewModel)) {
                 HStack {
                     Circle()
                         .fill(Color.white.opacity(0.3))
@@ -41,15 +43,15 @@ struct MenuView: View {
                         .foregroundColor(.white.opacity(0.7))
                 }
                 .padding()
-                .background(Color("roxoInicial"))
+                .background(Color.appPurple)
             }
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 15) {
                     Image(systemName: "network")
-                        .foregroundColor(Color("roxoInicial"))
+                        .foregroundColor(Color.appPurple)
                         .padding(10)
-                        .background(Color("roxoInicial").opacity(0.1))
+                        .background(Color.appPurple.opacity(0.1))
                         .clipShape(Circle())
                     
                     VStack(alignment: .leading) {

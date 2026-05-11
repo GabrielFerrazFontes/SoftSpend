@@ -12,13 +12,7 @@ struct CardMainView: View {
     
     @State var presentCiclo = false
     
-    let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     var progresso: CGFloat {
         // Evita divisão por zero e garante que não passe de 100%

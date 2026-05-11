@@ -10,12 +10,7 @@ import SwiftUI
 struct EmptyHistoricoView: View {
     let action: () -> Void
     
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     var body: some View {
         VStack{
@@ -28,7 +23,7 @@ struct EmptyHistoricoView: View {
                         .font(.system(size: 60))
                         .foregroundColor(.white)
                 )
-                .shadow(color: Color.purple.opacity(0.3), radius: 20, x: 0, y: 10)
+                .shadow(color: Color.appPurple.opacity(0.3), radius: 20, x: 0, y: 10)
                 .padding()
             
             Text("Nenhum ciclo ainda")
@@ -53,13 +48,13 @@ struct EmptyHistoricoView: View {
                 .frame(width: 200, height: 60)
                 .background(
                     LinearGradient(
-                        colors: [Color("roxoInicial"), Color("roxoFinal")],
+                        colors: [.appPurple, .appPurpleDark],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 20))
-                .shadow(color: Color("roxoFinal").opacity(0.3), radius: 10, x: 0, y: 5)
+                .shadow(color: Color.appPurpleDark.opacity(0.3), radius: 10, x: 0, y: 5)
             }
             .padding()
             

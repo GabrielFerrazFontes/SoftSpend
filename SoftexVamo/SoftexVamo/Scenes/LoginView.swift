@@ -22,7 +22,7 @@ struct LoginView: View {
                 VStack(spacing: 8) {
                     Text("SoftSpend")
                         .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(Color("roxoInicial"))
+                        .foregroundStyle(Color.appPurple)
                     
                     Text("Gerencie seus gastos")
                         .font(.system(size: 16))
@@ -73,7 +73,7 @@ struct LoginView: View {
                 .frame(height: 56)
                 .background(
                     LinearGradient(
-                        colors: [Color("roxoInicial"), Color("roxoFinal")],
+                        colors: [Color.appPurple, Color.appPurpleDark],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -90,7 +90,7 @@ struct LoginView: View {
                     Text("Nao tem conta? ")
                         .foregroundStyle(Color("textSecondary"))
                     + Text("Cadastre-se")
-                        .foregroundStyle(Color("roxoInicial"))
+                        .foregroundStyle(Color.appPurple)
                         .fontWeight(.bold)
                 }
                 .font(.system(size: 16))

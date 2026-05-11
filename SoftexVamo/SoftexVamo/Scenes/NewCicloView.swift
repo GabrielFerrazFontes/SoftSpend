@@ -118,7 +118,7 @@ struct NewCicloView: View {
                         Image(systemName: "chevron.left")
                         Text("Voltar")
                     }
-                    .foregroundColor(.purple)
+                    .foregroundColor(.appPurple)
                     .font(.system(size: 18, weight: .medium))
                 }
                 Spacer()

@@ -117,7 +117,7 @@ struct RegisterView: View {
                 .frame(height: 56)
                 .background(
                     LinearGradient(
-                        colors: [Color("roxoInicial"), Color("roxoFinal")],
+                        colors: [.appPurple, .appPurpleDark],
                         startPoint: .leading,
                         endPoint: .trailing
                     )

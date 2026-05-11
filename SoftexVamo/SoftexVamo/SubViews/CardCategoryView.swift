@@ -13,13 +13,7 @@ struct CardCategoryView: View {
     let systemImage: String
     let totalGasto: Float
     
-    let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     var progresso: CGFloat {
         return CGFloat(min(max(percent, 0), 1))

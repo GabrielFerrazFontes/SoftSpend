@@ -10,12 +10,7 @@ import SwiftUI
 struct EmptyCicloView: View {
     let action: () -> Void
     
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     var body: some View {
         VStack{
@@ -27,7 +22,7 @@ struct EmptyCicloView: View {
                         .font(.system(size: 60))
                         .foregroundColor(.white)
                 )
-                .shadow(color: Color.purple.opacity(0.3), radius: 20, x: 0, y: 10)
+                .shadow(color: Color.appPurple.opacity(0.3), radius: 20, x: 0, y: 10)
                 .padding()
             
             Text("Comece agora!")
@@ -53,13 +48,13 @@ struct EmptyCicloView: View {
                 .frame(width: 280, height: 60)
                 .background(
                     LinearGradient(
-                        colors: [Color("roxoInicial"), Color("roxoFinal")],
+                        colors: [.appPurple, .appPurpleDark],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 20))
-                .shadow(color: Color("roxoFinal").opacity(0.3), radius: 10, x: 0, y: 5)
+                .shadow(color: Color.appPurpleDark.opacity(0.3), radius: 10, x: 0, y: 5)
             }
             .padding()
             
@@ -68,10 +63,10 @@ struct EmptyCicloView: View {
                 VStack(spacing: 12){
                     Circle()
                         .frame(width: 56, height: 56)
-                        .foregroundStyle(Color("roxoInicial").opacity(0.15))
+                        .foregroundStyle(Color.appPurple.opacity(0.15))
                         .overlay(
                             Image(systemName: "chart.line.uptrend.xyaxis")
-                                .foregroundColor(Color("roxoInicial"))
+                                .foregroundColor(Color.appPurple)
                                 .font(.system(size: 20, weight: .semibold))
                         )
                     Text("Controle Total")

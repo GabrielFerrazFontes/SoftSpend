@@ -14,13 +14,7 @@ struct CardCiclosView: View {
     let ciclo : CicloSoftex
     @State var presentCiclo = false
     
-    let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     var progresso: CGFloat {
         let percent = ciclo.valor_total > 0 ? ciclo.gasto_total / ciclo.valor_total : 0
@@ -42,10 +36,10 @@ struct CardCiclosView: View {
                         ZStack {
                             Image(systemName: "mappin.and.ellipse")
                                 .font(.system(size: 18, weight: .medium))
-                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? .white : Color("roxoInicial"))
+                                .foregroundStyle(viewModel.actualCiclo.id == ciclo.id ? .white : Color.appPurple)
                         }
                         .frame(width: 40, height: 40)
-                        .background(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.15) : Color.purple.opacity(0.15))
+                        .background(viewModel.actualCiclo.id == ciclo.id ? Color.white.opacity(0.15) : Color.appPurple.opacity(0.15))
                         .cornerRadius(14)
                         .padding(.trailing, 10)
                         VStack(alignment: .leading){
@@ -81,7 +75,7 @@ struct CardCiclosView: View {
                             
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(viewModel.actualCiclo.id == ciclo.id ?
-                                      AnyShapeStyle(Color(red: 0.4, green: 0.9, blue: 0.5)) : AnyShapeStyle(Color("roxoInicial")))
+                                      AnyShapeStyle(Color(red: 0.4, green: 0.9, blue: 0.5)) : AnyShapeStyle(Color.appPurple))
                                 .frame(width: geometry.size.width * progresso, height: 10)
                                 .animation(.spring(), value: ciclo.gasto_total)
                         }

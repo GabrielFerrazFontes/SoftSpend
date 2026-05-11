@@ -38,7 +38,7 @@ struct AddNewGastoSheetView: View {
         _selectedDia = State(initialValue: inicial)
     }
     
-    let purplePrimary = Color(red: 147/255, green: 51/255, blue: 234/255)
+    let purplePrimary = Color.appPurple
     let purpleBackground = Color(red: 243/255, green: 232/255, blue: 255/255)
     let grayText = Color.black.opacity(0.6)
     let grayBorder = Color.gray.opacity(0.2)
@@ -62,7 +62,7 @@ struct AddNewGastoSheetView: View {
         VStack(spacing: 0) {
             ZStack(alignment: .top){
                 LinearGradient(
-                    colors: [purplePrimary.opacity(0.9), Color(red: 0.4, green: 0.2, blue: 0.9).opacity(0.9)],
+                    colors: [purplePrimary.opacity(0.9), Color.appPurpleDark.opacity(0.9)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -141,7 +141,7 @@ struct AddNewGastoSheetView: View {
                         .frame(maxWidth: .infinity)
                         .background(
                             LinearGradient(
-                                colors: [purplePrimary, Color.purple],
+                                colors: [purplePrimary.opacity(0.9), .purple],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -154,7 +154,7 @@ struct AddNewGastoSheetView: View {
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
                     .padding(.top, 10)
-                    .shadow(color: .purple.opacity(0.4), radius: 20, y: 10)
+                    .shadow(color: Color.appPurple.opacity(0.4), radius: 20, y: 10)
                     .disabled(isExtraindo)
                 }
                 .padding()
@@ -254,7 +254,7 @@ struct AddNewGastoSheetView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 65)
                     .background(LinearGradient(
-                        colors: [purplePrimary, Color(red: 0.4, green: 0.2, blue: 0.9)],
+                        colors: [purplePrimary, .appPurpleDark],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ))

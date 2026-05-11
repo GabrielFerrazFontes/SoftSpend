@@ -14,7 +14,6 @@ struct MainView: View {
     @State var sheetview = false
     @State private var isExpanded = true
 
-    let primaryPurple = Color(red: 0.54, green: 0.36, blue: 1.0)
     
     var canAddGasto: Bool {
         viewModel.actualCiclo.backendId != nil
@@ -41,7 +40,7 @@ struct MainView: View {
                         Text("Início")
                             .font(.system(size: 12, weight: .semibold))
                     }
-                    .foregroundColor(viewModel.selectedTab == 0 ? primaryPurple : .gray)
+                    .foregroundColor(viewModel.selectedTab == 0 ? .appPurple : .gray)
                 }
                 .frame(maxWidth: .infinity)
                 
@@ -66,8 +65,8 @@ struct MainView: View {
                     .fixedSize()
                     .background(
                         Capsule()
-                            .fill(canAddGasto ? primaryPurple : Color.gray.opacity(0.5))
-                            .shadow(color: (canAddGasto ? primaryPurple : Color.gray).opacity(0.4), radius: 10, x: 0, y: 5)
+                            .fill(canAddGasto ? .appPurple : Color.gray.opacity(0.5))
+                            .shadow(color: (canAddGasto ? Color.appPurple : Color.gray).opacity(0.4), radius: 10, x: 0, y: 5)
                     )
                 }
                 .zIndex(1)
@@ -96,7 +95,7 @@ struct MainView: View {
                         Text("Histórico")
                             .font(.system(size: 12, weight: .semibold))
                     }
-                    .foregroundColor(viewModel.selectedTab == 1 ? primaryPurple : .gray)
+                    .foregroundColor(viewModel.selectedTab == 1 ? .appPurple : .gray)
                 }
                 .frame(maxWidth: .infinity)
             }

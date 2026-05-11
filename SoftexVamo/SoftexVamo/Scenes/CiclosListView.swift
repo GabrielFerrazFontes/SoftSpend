@@ -19,12 +19,7 @@ struct CiclosListView: View {
         AuthService.shared.currentUser
     }
     
-    let corFundoTela = LinearGradient(
-        colors: [Color("roxoInicial"),
-                 Color("roxoFinal")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    let corFundoTela = LinearGradient.appPurple
     
     @State var addNewGastoSheet: Bool = false
     @State var addNewCicloSheet: Bool = false
@@ -54,7 +49,7 @@ struct CiclosListView: View {
                                     .font(.system(size: 14, weight: .bold))
                                     .foregroundStyle(.white)
                                     .padding(10)
-                                    .background(Color("roxoInicial"))
+                                    .background(Color.appPurple)
                                     .clipShape(Circle())
                                 
                                 Image(systemName: "chevron.up")
@@ -111,6 +106,7 @@ struct CiclosListView: View {
             .overlay(alignment: .topTrailing) {
                 if showMenu {
                     MenuView(showMenu: $showMenu)
+                        .environmentObject(viewModel)
                         .offset(x: -16, y: 70)
                 }
             }
