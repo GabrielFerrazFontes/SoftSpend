@@ -17,7 +17,9 @@ struct CicloGastosView: View {
     
     func removerGastoEspecifico(dia: DiaSoftex, index: Int) {
         let indexSet = IndexSet(integer: index)
-        let gastoID = viewModel.deleteGasto(dia: dia, offsets: indexSet)
+        
+        guard let gastoID = viewModel.deleteGasto(dia: dia, offsets: indexSet) else { return }
+        
         deleteAction(dia.id, gastoID)
     }
     
@@ -243,9 +245,9 @@ final class CicloGastosViewModel: ObservableObject {
     }
     
     var secoesExibidas: [DiaSoftex] {
-        if searchGastoText.isEmpty && categoriaFiltro == nil { return ciclo.dias }
+        guard let dias = ciclo.dias else { return []}
         
-        return ciclo.dias.compactMap { dia in
+        return dias.compactMap { dia in
             let gastosQueBatem = dia.gastos.filter { gasto in
                 let matchesTexto = searchGastoText.isEmpty || gasto.titulo.localizedCaseInsensitiveContains(searchGastoText)
                 let matchesCategoria = categoriaFiltro == nil || gasto.categoria == categoriaFiltro
@@ -260,8 +262,7 @@ final class CicloGastosViewModel: ObservableObject {
         }
     }
     
-    func deleteGasto(dia: DiaSoftex, offsets: IndexSet) -> Int {
-        
+    func deleteGasto(dia: DiaSoftex, offsets: IndexSet) -> Int? {
         let gastosExibidos = dia.gastos.filter { gasto in
             let matchesTexto = searchGastoText.isEmpty || gasto.titulo.localizedCaseInsensitiveContains(searchGastoText)
             let matchesCategoria = categoriaFiltro == nil || gasto.categoria == categoriaFiltro
@@ -269,15 +270,15 @@ final class CicloGastosViewModel: ObservableObject {
         }
         
         guard let firstOffset = offsets.first,
-              firstOffset < gastosExibidos.count else { return 0 }
+              firstOffset < gastosExibidos.count else { return nil }
         
         let gastoParaRemover = gastosExibidos[firstOffset]
-        let backendID = gastoParaRemover.backendId ?? 0
         
-        if let diaIndex = ciclo.dias.firstIndex(where: { $0.id == dia.id }) {
-            ciclo.dias[diaIndex].gastos.removeAll(where: { $0.id == gastoParaRemover.id })
+        guard let backendID = gastoParaRemover.backendId else { return nil }
+        
+        if let diaIndex = ciclo.dias?.firstIndex(where: { $0.id == dia.id }) {
+            ciclo.dias?[diaIndex].gastos.removeAll(where: { $0.id == gastoParaRemover.id })
         }
         
         return backendID
-    }
-}
+    }}

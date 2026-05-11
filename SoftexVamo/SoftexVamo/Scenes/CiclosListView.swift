@@ -98,7 +98,7 @@ struct CiclosListView: View {
                 Spacer()
             }
             .task {
-                await viewModel.fetchAllCiclos1()
+                await viewModel.fetchCiclosResumo()
             }
             .navigationBarBackButtonHidden(true)
             .toolbar(.hidden)
@@ -200,6 +200,63 @@ final class CiclosListViewModel: ObservableObject {
         }
     }
     
+    @MainActor
+    func fetchCiclosResumo() async {
+        
+        guard let user = currentUser else {
+            print("Erro: Usuário não está logado")
+            return
+        }
+        
+        if hasLoadedOnce { return }
+        
+        let cacheData = UserDefaults.standard.data(forKey: "ultimo_ciclo_cache")
+        
+        if let data = cacheData {
+            if let cache = try? JSONDecoder().decode(CicloSoftex.self, from: data)
+            {
+                self.actualCiclo = cache
+                print("Cache carregado em background")
+            }
+        }
+        
+        do {
+            let ciclos = try await NetworkManager.shared.fetchCicloResumo(user: user)
+            
+            self.allCiclos = ciclos
+            
+            self.index = max(self.allCiclos.count - 1, 0)
+            
+            if !self.allCiclos.isEmpty {
+                let cicloParaSalvar = self.allCiclos[self.index]
+                
+                guard let cicloId = cicloParaSalvar.backendId else {
+                    return
+                }
+                
+                self.actualCiclo = try await NetworkManager.shared.fetchCicloById(cicloId: cicloId)
+                self.salvarNoCache(ciclo: cicloParaSalvar)
+                
+            } else {
+                self.actualCiclo = CicloSoftex(valor_total: 0, gasto_total: 0, periodo: "", diaria: 0, titulo: "", dias: [])
+                UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
+            }
+            
+            self.isLoading = false
+            
+            self.hasLoadedOnce = true
+            
+        } catch {
+            print("Erro ao buscar ciclos:", error)
+            
+            self.allCiclos = []
+            self.actualCiclo = CicloSoftex(valor_total: 0, gasto_total: 0, periodo: "", diaria: 0, titulo: "", dias: [])
+            UserDefaults.standard.removeObject(forKey: "ultimo_ciclo_cache")
+            self.isLoading = false
+            self.hasLoadedOnce = true
+        }
+    }
+    
     func createNewCiclo(startDate: Date, endDate: Date, totalValue: Float, titulo: String) async {
         let dayCount = Calendar.current.datesBetween(startDate, and: endDate)
         let saldo = totalValue / Float(dayCount)
@@ -267,36 +324,29 @@ final class CiclosListViewModel: ObservableObject {
         }
     }
     
-    func createNewGasto( title: String, value: Float, dia: DiaSoftex, categoria: Categoria) async throws {
-        do {
-            let gasto = GastosDia(valor: value, titulo: title, categoria: categoria)
+    func createNewGasto(title: String, value: Float, dia: DiaSoftex, categoria: Categoria) async throws {
+        guard let diaId = dia.backendId else { return }
+        
+        let gasto = GastosDia(valor: value, titulo: title, categoria: categoria)
+        let novoGasto = try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: diaId)
+        
+        await MainActor.run {
+            guard let diaIndex = actualCiclo.dias?.firstIndex(where: { $0.backendId == dia.backendId }) else { return }
             
-            let novoGasto = try await NetworkManager.shared.postGasto(newGasto: gasto, diaId: dia.backendId!)
-            
-            await MainActor.run {
-                if let diaIndex = actualCiclo.dias.firstIndex(where: { $0.backendId == dia.backendId }) {
-                    
-                    self.actualCiclo.dias[diaIndex].gastos.append(novoGasto)
-                    self.actualCiclo.gasto_total += novoGasto.valor
-                    self.allCiclos[index] = self.actualCiclo
-                }
-            }
-            
-            await fetchAllCiclos1()
-            
-        } catch {
-            print("Erro ao criar gasto:", error)
+            self.actualCiclo.dias?[diaIndex].gastos.append(novoGasto)
+            self.actualCiclo.gasto_total += novoGasto.valor
+            self.allCiclos[index] = self.actualCiclo
         }
     }
     
     func deleteGasto(gastoID: Int) async throws{
-        var valorRemovido: Float = 0
+        guard let dias = actualCiclo.dias else { return }
         
-        for diaIndex in actualCiclo.dias.indices {
-            if let gastoIndex = actualCiclo.dias[diaIndex].gastos.firstIndex(where: { $0.backendId == gastoID }) {
-                valorRemovido = actualCiclo.dias[diaIndex].gastos[gastoIndex].valor
+        for diaIndex in actualCiclo.dias!.indices {
+            if let gastoIndex = dias[diaIndex].gastos.firstIndex(where: { $0.backendId == gastoID }) {
+                let valorRemovido = dias[diaIndex].gastos[gastoIndex].valor
                 await MainActor.run {
-                    self.actualCiclo.dias[diaIndex].gastos.remove(at: gastoIndex)
+                    self.actualCiclo.dias?[diaIndex].gastos.remove(at: gastoIndex)
                     self.actualCiclo.gasto_total -= valorRemovido
                     
                     if self.index < self.allCiclos.count {

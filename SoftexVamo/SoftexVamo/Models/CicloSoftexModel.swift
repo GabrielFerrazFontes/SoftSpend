@@ -60,7 +60,7 @@ struct CicloSoftex: Codable, Identifiable {
     var periodo: String
     var diaria: Float
     var titulo: String
-    var dias: [DiaSoftex]
+    var dias: [DiaSoftex]?
     var id_usuario: Int?
     
     enum CodingKeys: String, CodingKey {

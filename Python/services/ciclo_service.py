@@ -56,3 +56,11 @@ def get_ciclo(db: Session, ciclo_id: int):
 
 def get_all_ciclos(db: Session, user_id: int):
     return ciclo_repository.get_all_ciclos(db, user_id)
+
+
+def get_ciclos_resumo(db: Session, user_id: int):
+    return ciclo_repository.get_ciclos_resumo(db, user_id)
+
+
+def get_ciclo_by_id(db: Session, ciclo_id: int):
+    return ciclo_repository.get_ciclo_by_id(db, ciclo_id)

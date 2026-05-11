@@ -31,6 +31,47 @@ final class NetworkManager {
         return try decoder.decode([CicloSoftex].self, from: data)
     }
     
+    func fetchCicloById(cicloId: Int) async throws -> CicloSoftex {
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/ciclos/\(cicloId)") else {
+            throw URLError(.badURL)
+        }
+        
+        let session = URLSession(
+            configuration: .default,
+            delegate: InsecureSessionDelegate(),
+            delegateQueue: nil
+        )
+        
+        let (data, response) = try await session.data(from: url)
+        
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
+        return try decoder.decode(CicloSoftex.self, from: data)
+    }
+    
+    func fetchCicloResumo(user: UserModel) async throws -> [CicloSoftex] {
+        
+        guard let url = URL(string: "\(APIConfig.shared.baseURL)/usuario/ciclos/resumo/\(user.id)") else { return [] }
+        
+        let session = URLSession(
+            configuration: .default,
+            delegate: InsecureSessionDelegate(),
+            delegateQueue: nil
+        )
+        
+        let (data, _) = try await session.data(from: url)
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
+        return try decoder.decode([CicloSoftex].self, from: data)
+    }
+    
     func postCiclo(newCiclo: CicloSoftex) async throws -> CicloSoftex {
         
         guard let url = URL(string: "\(APIConfig.shared.baseURL)/ciclos") else { throw URLError(.badURL)}

@@ -23,7 +23,7 @@ struct PerfilView: View {
     
     private var ciclosAtivos: Int {
         viewModel.allCiclos.filter { ciclo in
-            guard let dias = ciclo.dias.last else { return false }
+            guard let dias = ciclo.dias?.last else { return false }
             return dias.data >= Date()
         }.count
     }

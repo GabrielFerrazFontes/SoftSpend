@@ -72,7 +72,7 @@ struct MainView: View {
                 .zIndex(1)
                 .disabled(!canAddGasto)
                 .fullScreenCover(isPresented: $sheetview){
-                    AddNewGastoSheetView(dias: viewModel.actualCiclo.dias)
+                    AddNewGastoSheetView(dias: viewModel.actualCiclo.dias ?? [])
                         .environmentObject(viewModel)
                 }
                 .offset(y: -24)
